@@ -10,10 +10,14 @@
   "dependencies": {
     "next": "16.3.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "vue-plugin-hiprint": "^0.0.60"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "tailwindcss": "^4"
+  },
+  "scripts": {
+  "dev": "next dev -H 0.0.0.0"
   }
 }

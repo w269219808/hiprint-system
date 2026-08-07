@@ -1,69 +1,245 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState } from 'react';
+import defaultTemplates from '../data/templates.json';
+import HiprintButton from '../HiprintButton';
+
+// 标签类型选项
+const LABEL_TYPES = [
+  { key: 'product', label: '📦 产品标签' },
+  { key: 'carton', label: '📋 外箱标签' },
+  { key: 'customer', label: '👤 装箱号标签' },
+  { key: 'company', label: '🏢 公司标签' },
+];
+
+export default function HomePage() {
+  // 当前选中的标签类型
+  const [activeType, setActiveType] = useState('product');
+
+  // 纸张设置（根据类型切换时重置）
+  const [paperSettings, setPaperSettings] = useState({
+    width: defaultTemplates[activeType]?.defaultWidth || 60,
+    height: defaultTemplates[activeType]?.defaultHeight || 40,
+  });
+
+  // 数据列表（支持追加多组）
+  const [dataList, setDataList] = useState([{}]);
+
+  // 打印份数
+  const [printCopies, setPrintCopies] = useState(1);
+
+  // 当前模板配置
+  const template = defaultTemplates[activeType];
+  const fields = template?.fields || [];
+
+  // 切换标签类型时重置纸张和数据
+  const handleTypeChange = (typeKey) => {
+    setActiveType(typeKey);
+    const t = defaultTemplates[typeKey];
+    setPaperSettings({
+      width: t?.defaultWidth || 60,
+      height: t?.defaultHeight || 40,
+    });
+    setDataList([{}]);
+  };
+
+  // 更新单条数据
+  const updateDataItem = (index, key, value) => {
+    const newList = [...dataList];
+    newList[index] = { ...newList[index], [key]: value };
+    setDataList(newList);
+  };
+
+  // 追加数据组
+  const addDataItem = () => {
+    setDataList([...dataList, {}]);
+  };
+
+  // 删除数据组
+  const removeDataItem = (index) => {
+    if (dataList.length <= 1) return;
+    setDataList(dataList.filter((_, i) => i !== index));
+  };
+
+  // 生成打印数据（展开所有数据 × 打印份数）
+  const getPrintData = () => {
+    const result = [];
+    dataList.forEach(item => {
+      for (let i = 0; i < printCopies; i++) {
+        result.push({ ...item });
+      }
+    });
+    return result;
+  };
+
+  // 构建hiprint模板
+  const buildTemplate = () => {
+    const fieldsConfig = fields.map(f => ({
+      field: f.key,
+      label: f.label,
+      width: 100 / fields.length,
+    }));
+
+    return {
+      panels: [
+        {
+          width: Number(paperSettings.width),
+          height: Number(paperSettings.height),
+          elements: fieldsConfig.map((f, idx) => ({
+            type: 'text',
+            field: f.field,
+            label: f.label,
+            options: {
+              left: 5 + idx * 20,
+              top: 10 + (idx % 2) * 20,
+              width: 50,
+              height: 18,
+              fontSize: 10,
+            },
+          })),
+        },
+      ],
+    };
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.js
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className="p-8 max-w-2xl mx-auto font-sans">
+      <h1 className="text-2xl font-bold mb-6 text-center">🏷️ 蓝铭电子标签打印控制台</h1>
+
+      {/* 标签类型切换 */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {LABEL_TYPES.map((type) => (
+          <button
+            key={type.key}
+            onClick={() => handleTypeChange(type.key)}
+            className={`px-4 py-2 rounded-lg border transition-all ${
+              activeType === type.key
+                ? 'bg-[#2563eb] text-white border-blue-600 shadow-md'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+            }`}
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            {type.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="border border-gray-200 p-6 rounded-xl bg-gray-50 shadow-sm space-y-5">
+        {/* 纸张设定 */}
+        <div>
+          <h3 className="font-semibold text-gray-700 border-b pb-2 mb-3">
+            📐 纸张设定
+          </h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-600">宽度 (mm)</label>
+              <input
+                type="number"
+                value={paperSettings.width}
+                onChange={(e) => setPaperSettings({ ...paperSettings, width: Number(e.target.value) })}
+                className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600">高度 (mm)</label>
+              <input
+                type="number"
+                value={paperSettings.height}
+                onChange={(e) => setPaperSettings({ ...paperSettings, height: Number(e.target.value) })}
+                className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+              />
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+
+        {/* 内容编辑 - 支持追加 */}
+        <div>
+          <div className="flex items-center justify-between border-b pb-2 mb-3">
+            <h3 className="font-semibold text-gray-700">✏️ 内容编辑</h3>
+            <button
+              onClick={addDataItem}
+              className="text-sm bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
+            >
+              ＋ 追加一组
+            </button>
+          </div>
+
+          {dataList.map((item, index) => (
+            <div
+              key={index}
+              className="border border-gray-200 rounded-lg p-4 mb-3 bg-white relative"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <span className="text-sm font-medium text-gray-500">
+                  第 {index + 1} 组
+                </span>
+                <button
+                  onClick={() => removeDataItem(index)}
+                  className="text-red-500 hover:text-red-700 text-sm"
+                  disabled={dataList.length <= 1}
+                >
+                  ✕ 删除
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                {fields.map((field) => (
+                  <div key={field.key}>
+                    <label className="block text-sm font-medium text-gray-600">
+                      {field.label}
+                    </label>
+                    <input
+                      type={field.type === 'number' ? 'number' : 'text'}
+                      value={item[field.key] || ''}
+                      onChange={(e) => updateDataItem(index, field.key, e.target.value)}
+                      className="mt-1 w-full p-2 border border-gray-300 rounded-md text-sm"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 打印设置 */}
+        <div className="border-t pt-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-600">打印份数</label>
+              <input
+                type="number"
+                min="1"
+                value={printCopies}
+                onChange={(e) => setPrintCopies(Number(e.target.value))}
+                className="mt-1 w-20 p-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600">选择打印机</label>
+              <select className="mt-1 p-2 border border-gray-300 rounded-md bg-white">
+                <option>默认打印机</option>
+                <option>打印机 1</option>
+                <option>打印机 2</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* 打印按钮 */}
+        <div className="border-t pt-4">
+          <HiprintButton
+            templateData={buildTemplate()}
+            printData={getPrintData()}
+            label={`🔊 静默打印 (${getPrintData().length} 张)`}
+          />
+        </div>
+      </div>
+
+      {/* 数据预览 */}
+      <div className="mt-4 text-xs text-gray-400 border-t pt-3">
+        当前标签类型: <strong>{template?.name}</strong> ｜
+        数据组数: {dataList.length} ｜
+        总打印张数: {getPrintData().length}
+      </div>
+    </main>
   );
 }

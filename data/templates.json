@@ -1,0 +1,48 @@
+{
+  "product": {
+    "name": "产品标签",
+    "defaultWidth": 60,
+    "defaultHeight": 40,
+    "fields": [
+      { "key": "title", "label": "产品名称", "type": "text" },
+      { "key": "sku", "label": "SKU/条码编号", "type": "text" },
+      { "key": "model", "label": "型号", "type": "text" },
+      { "key": "color", "label": "颜色", "type": "text" },
+      { "key": "capacity", "label": "容量", "type": "text" },
+      { "key": "lang", "label": "中英文", "type": "text" }
+    ]
+  },
+  "carton": {
+    "name": "外箱标签",
+    "defaultWidth": 80,
+    "defaultHeight": 60,
+    "fields": [
+      { "key": "title", "label": "箱号/名称", "type": "text" },
+      { "key": "sku", "label": "SKU", "type": "text" },
+      { "key": "quantity", "label": "装箱数量", "type": "number" },
+      { "key": "weight", "label": "毛重(kg)", "type": "number" }
+    ]
+  },
+  "customer": {
+    "name": "装箱标签",
+    "defaultWidth": 70,
+    "defaultHeight": 50,
+    "fields": [
+      { "key": "name", "label": "客户名称", "type": "text" },
+      { "key": "contact", "label": "联系人", "type": "text" },
+      { "key": "phone", "label": "电话", "type": "text" },
+      { "key": "address", "label": "地址", "type": "text" }
+    ]
+  },
+  "company": {
+    "name": "公司信息标签",
+    "defaultWidth": 70,
+    "defaultHeight": 50,
+    "fields": [
+      { "key": "name", "label": "公司名称", "type": "text" },
+      { "key": "brand", "label": "品牌", "type": "text" },
+      { "key": "website", "label": "官网", "type": "text" },
+      { "key": "address", "label": "地址", "type": "text" }
+    ]
+  }
+}
