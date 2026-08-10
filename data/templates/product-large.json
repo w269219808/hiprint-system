@@ -1,0 +1,52 @@
+{
+  "panels": [{
+    "printElements": [
+      {
+        "options": {
+          "left": 10,
+          "top": 5,
+          "title": "🏷️ {{model}}",
+          "fontSize": 18,
+          "fontWeight": "bold"
+        },
+        "printElementType": { "type": "text" }
+      },
+      {
+        "options": {
+          "left": 10,
+          "top": 35,
+          "title": "电压: {{voltage}}",
+          "fontSize": 12
+        },
+        "printElementType": { "type": "text" }
+      },
+      {
+        "options": {
+          "left": 10,
+          "top": 55,
+          "title": "容量: {{capacity}}",
+          "fontSize": 12
+        },
+        "printElementType": { "type": "text" }
+      },
+      {
+        "options": {
+          "left": 10,
+          "top": 75,
+          "title": "颜色: {{color}}",
+          "fontSize": 12
+        },
+        "printElementType": { "type": "text" }
+      },
+      {
+        "options": {
+          "left": 10,
+          "top": 95,
+          "testData": "{{barcode}}",
+          "barcodeType": "code128"
+        },
+        "printElementType": { "type": "barcode" }
+      }
+    ]
+  }]
+}

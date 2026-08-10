@@ -1,0 +1,45 @@
+{
+  "panels": [{
+    "printElements": [
+      {
+        "options": {
+          "left": 5,
+          "top": 3,
+          "title": "{{model}}",
+          "fontSize": 14,
+          "fontWeight": "bold"
+        },
+        "printElementType": { "type": "text" }
+      },
+      {
+        "options": {
+          "left": 150,
+          "top": 3,
+          "title": "{{color}}",
+          "fontSize": 12,
+          "color": "#ffffff"
+        },
+        "printElementType": { "type": "text" }
+      },
+      {
+        "options": {
+          "left": 5,
+          "top": 25,
+          "title": "{{capacity}}",
+          "fontSize": 10
+        },
+        "printElementType": { "type": "text" }
+      },
+      {
+        "options": {
+          "left": 5,
+          "top": 45,
+          "testData": "{{barcode}}",
+          "barcodeType": "code128",
+          "barWidth": "2"
+        },
+        "printElementType": { "type": "barcode" }
+      }
+    ]
+  }]
+}

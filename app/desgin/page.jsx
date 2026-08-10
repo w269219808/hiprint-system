@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import HiprintDesigner from '@/HiprintDesigner';
-import templatesData from '@/data/templates.json'; // 引入你的标签模板 JSON
+import templatesData from '@/data/labelTemplate.json';// 引入你的标签模板 JSON
 
 
 

@@ -1,0 +1,41 @@
+{
+  "templates": [
+    {
+      "id": "standard-60x30",
+      "name": "标准标签",
+      "description": "常规产品标签，适合大多数产品",
+      "width": 60,
+      "height": 30,
+      "preview": "📏 60×30mm",
+      "templateFile": "product-standard.json",
+      "default": true
+    },
+    {
+      "id": "large-70x40",
+      "name": "大号标签",
+      "description": "大尺寸标签，适合信息较多的产品",
+      "width": 80,
+      "height": 40,
+      "preview": "📏 80×40mm",
+      "templateFile": "product-large.json"
+    },
+    {
+      "id": "small-60x30",
+      "name": "DL标签",
+      "description": "小尺寸标签，适合小巧产品",
+      "width": 60,
+      "height": 30,
+      "preview": "📏 60×30mm-2",
+      "templateFile": "product-small.json"
+    },
+    {
+      "id": "wide-80x30",
+      "name": "宽幅标签",
+      "description": "宽幅标签，适合条形码较长的产品",
+      "width": 80,
+      "height": 30,
+      "preview": "📏 80×30mm",
+      "templateFile": "product-wide.json"
+    }
+  ]
+}
