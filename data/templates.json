@@ -1,48 +1,170 @@
 {
   "product": {
-    "name": "产品标签",
+    "name": "产品标签（中文）",
     "defaultWidth": 60,
     "defaultHeight": 40,
-    "fields": [
-      { "key": "title", "label": "产品名称", "type": "text" },
-      { "key": "sku", "label": "SKU/条码编号", "type": "text" },
-      { "key": "model", "label": "型号", "type": "text" },
-      { "key": "color", "label": "颜色", "type": "text" },
-      { "key": "capacity", "label": "容量", "type": "text" },
-      { "key": "lang", "label": "中英文", "type": "text" }
-    ]
+    "productData": {
+      "DL3500": { "capacity": "3500mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+      "DL5000": { "capacity": "5000mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+      "DL7000": { "capacity": "7000mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+      "DL10000": { "capacity": "10000mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+      "DX35": { "capacity": "3500mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+      "DX50": { "capacity": "5000mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+      "DX70": { "capacity": "7000mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+      "DX10": { "capacity": "10000mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+      "DN35T": { "capacity": "3500mAh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"] },
+      "DN50T": { "capacity": "5000mAh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"] },
+      "DN70T": { "capacity": "7000mAh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"] },
+      "DN10T": { "capacity": "10000mAh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"] },
+      "GN20F": { "capacity": "20000mAh", "colors": ["银色", "黑色", "香槟金"] },
+      "GN25F": { "capacity": "25000mAh", "colors": ["银色", "黑色", "香槟金"] },
+      "GN10F": { "capacity": "10000mAh", "colors": ["银色", "黑色", "香槟金"] },
+      "DN20A": { "capacity": "20000mAh", "colors": ["黑色", "黑红色"] },
+      "GP20A": { "capacity": "20000mAh", "colors": ["黑色", "黑红色"] },
+      "dx15-10a": { "capacity": "10000mAh", "colors": ["黑色", "蓝色"] },
+      "dx15-13.5a": { "capacity": "13500mAh", "colors": ["黑色", "蓝色"] },
+      "dx15-15a": { "capacity": "15000mAh", "colors": ["黑色", "蓝色"] },
+      "DN1700NS": {
+        "isMultiCapacity": true,
+        "capacities": [
+          { "label": "7800mAh", "colors": ["黑色", "蓝色", "白色"] },
+          { "label": "9600mAh", "colors": ["黑色", "蓝色", "白色"] },
+          { "label": "10400mAh", "colors": ["黑色", "蓝色", "白色"] },
+          { "label": "11600mAh", "colors": ["黑色", "蓝色", "白色"] },
+          { "label": "12800mAh", "colors": ["黑色", "蓝色", "白色"] },
+          { "label": "13600mAh", "colors": ["黑色", "蓝色", "白色"] }
+        ]
+      }
+    },
+    "templates": {
+      "zh": {
+        "panels": [{
+          "index": 0,
+          "height": 40,
+          "width": 60,
+          "paperHeader": 0,
+          "paperFooter": 0,
+          "printElements": [
+            {
+              "options": { "left": 3, "top": 2, "width": 40, "height": 6, "fontSize": 8, "fontWeight": "bold", "color": "#333", "field": "brand", "testData": "SEAFISHERMAN" },
+              "printElementType": { "title": "品牌", "type": "text" }
+            },
+            {
+              "options": { "left": 45, "top": 2, "width": 12, "height": 6, "fontSize": 7, "fontWeight": "bold", "color": "#555", "field": "icons", "testData": "CE Li-ion" },
+              "printElementType": { "title": "图标", "type": "text" }
+            },
+            {
+              "options": { "left": 3, "top": 10, "width": 54, "height": 10, "fontSize": 16, "fontWeight": "bold", "color": "#000", "textAlign": "center", "field": "model", "template": "Model: {model}" },
+              "printElementType": { "title": "型号", "type": "text" }
+            },
+            {
+              "options": { "left": 5, "top": 22, "width": 25, "height": 6, "fontSize": 9, "color": "#333", "field": "capacity", "template": "容量: {capacity}" },
+              "printElementType": { "title": "容量", "type": "text" }
+            },
+            {
+              "options": { "left": 32, "top": 22, "width": 25, "height": 6, "fontSize": 9, "color": "#333", "field": "color", "template": "颜色: {color}" },
+              "printElementType": { "title": "颜色", "type": "text" }
+            },
+            {
+              "options": { "left": 3, "top": 30, "width": 54, "height": 0.5, "lineColor": "#ccc", "lineWidth": 0.5, "field": "line" },
+              "printElementType": { "title": "分割线", "type": "vline" }
+            },
+            {
+              "options": { "left": 3, "top": 32, "width": 54, "height": 5, "fontSize": 6, "color": "#888", "textAlign": "center", "field": "footer", "template": "型号: {model} 容量: {capacity} 颜色: {color}" },
+              "printElementType": { "title": "页脚", "type": "text" }
+            }
+          ]
+        }]
+      },
+      "en": {
+        "panels": [{
+          "index": 0,
+          "height": 40,
+          "width": 60,
+          "paperHeader": 0,
+          "paperFooter": 0,
+          "printElements": [
+            {
+              "options": { "left": 3, "top": 2, "width": 40, "height": 6, "fontSize": 8, "fontWeight": "bold", "color": "#333", "field": "brand", "testData": "SEAFISHERMAN" },
+              "printElementType": { "title": "Brand", "type": "text" }
+            },
+            {
+              "options": { "left": 45, "top": 2, "width": 12, "height": 6, "fontSize": 7, "fontWeight": "bold", "color": "#555", "field": "icons", "testData": "CE Li-ion" },
+              "printElementType": { "title": "Icons", "type": "text" }
+            },
+            {
+              "options": { "left": 3, "top": 10, "width": 54, "height": 10, "fontSize": 16, "fontWeight": "bold", "color": "#000", "textAlign": "center", "field": "model", "template": "Model: {model}" },
+              "printElementType": { "title": "Model", "type": "text" }
+            },
+            {
+              "options": { "left": 5, "top": 22, "width": 25, "height": 6, "fontSize": 9, "color": "#333", "field": "capacity", "template": "Capacity: {capacity}" },
+              "printElementType": { "title": "Capacity", "type": "text" }
+            },
+            {
+              "options": { "left": 32, "top": 22, "width": 25, "height": 6, "fontSize": 9, "color": "#333", "field": "color", "template": "Color: {color}" },
+              "printElementType": { "title": "Color", "type": "text" }
+            },
+            {
+              "options": { "left": 3, "top": 30, "width": 54, "height": 0.5, "lineColor": "#ccc", "lineWidth": 0.5, "field": "line" },
+              "printElementType": { "title": "Line", "type": "vline" }
+            },
+            {
+              "options": { "left": 3, "top": 32, "width": 54, "height": 5, "fontSize": 6, "color": "#888", "textAlign": "center", "field": "footer", "template": "Model: {model} Capacity: {capacity} Color: {color}" },
+              "printElementType": { "title": "Footer", "type": "text" }
+            }
+          ]
+        }]
+      },
+      "special": {
+        "panels": [{
+          "index": 0,
+          "height": 40,
+          "width": 60,
+          "paperHeader": 0,
+          "paperFooter": 0,
+          "printElements": [
+            {
+              "options": { "left": 3, "top": 2, "width": 40, "height": 6, "fontSize": 8, "fontWeight": "bold", "color": "#333", "field": "brand", "testData": "MAG CRUISR" },
+              "printElementType": { "title": "Brand", "type": "text" }
+            },
+            {
+              "options": { "left": 3, "top": 10, "width": 54, "height": 8, "fontSize": 14, "fontWeight": "bold", "color": "#000", "textAlign": "center", "field": "model" },
+              "printElementType": { "title": "Model", "type": "text" }
+            },
+            {
+              "options": { "left": 3, "top": 19, "width": 54, "height": 6, "fontSize": 9, "color": "#333", "textAlign": "center", "field": "specs" },
+              "printElementType": { "title": "Specs", "type": "text" }
+            },
+            {
+              "options": { "left": 3, "top": 27, "width": 54, "height": 5, "fontSize": 8, "fontWeight": "bold", "color": "#555", "textAlign": "center", "field": "icons", "testData": "CE Li-ion" },
+              "printElementType": { "title": "Icons", "type": "text" }
+            },
+            {
+              "options": { "left": 3, "top": 33, "width": 54, "height": 0.5, "lineColor": "#ccc", "lineWidth": 0.5, "field": "line" },
+              "printElementType": { "title": "Line", "type": "vline" }
+            },
+            {
+              "options": { "left": 3, "top": 35, "width": 54, "height": 4, "fontSize": 5, "color": "#999", "textAlign": "center", "field": "footer", "testData": "赵敏MAG CRUISR CE打印标签60-30mm" },
+              "printElementType": { "title": "Footer", "type": "text" }
+            }
+          ]
+        }]
+      }
+    }
   },
   "carton": {
     "name": "外箱标签",
     "defaultWidth": 80,
-    "defaultHeight": 60,
-    "fields": [
-      { "key": "title", "label": "箱号/名称", "type": "text" },
-      { "key": "sku", "label": "SKU", "type": "text" },
-      { "key": "quantity", "label": "装箱数量", "type": "number" },
-      { "key": "weight", "label": "毛重(kg)", "type": "number" }
-    ]
+    "defaultHeight": 60
   },
   "customer": {
-    "name": "装箱标签",
+    "name": "装箱号标签",
     "defaultWidth": 70,
-    "defaultHeight": 50,
-    "fields": [
-      { "key": "name", "label": "客户名称", "type": "text" },
-      { "key": "contact", "label": "联系人", "type": "text" },
-      { "key": "phone", "label": "电话", "type": "text" },
-      { "key": "address", "label": "地址", "type": "text" }
-    ]
+    "defaultHeight": 50
   },
   "company": {
     "name": "公司信息标签",
     "defaultWidth": 70,
-    "defaultHeight": 50,
-    "fields": [
-      { "key": "name", "label": "公司名称", "type": "text" },
-      { "key": "brand", "label": "品牌", "type": "text" },
-      { "key": "website", "label": "官网", "type": "text" },
-      { "key": "address", "label": "地址", "type": "text" }
-    ]
+    "defaultHeight": 50
   }
 }
