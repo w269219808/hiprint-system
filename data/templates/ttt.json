@@ -6,43 +6,140 @@
             "name": 1,
             "height": 30,
             "width": 60,
-            "paperHeader": 0,
-            "paperFooter": 85.03937007874016,
+            "paperHeader": 3,
+            "paperFooter": 82.5,
             "printElements":
             [
                 {
                     "options":
                     {
-                        "left": 97.5,
-                        "top": 187.5,
-                        "height": 9.75,
-                        "width": 120,
-                        "title": "文本"
+                        "left": 0,
+                        "top": 9,
+                        "height": 16,
+                        "width": 169,
+                        "title": "{{model}}",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "fontFamily": "Microsoft YaHei",
+                        "fontSize": 11,
+                        "fontWeight": "bolder",
+                        "textContentVerticalAlign": "middle",
+                        "qrCodeLevel": 0,
+                        "right": 91.75,
+                        "bottom": 22.49609375,
+                        "vCenter": 56.75,
+                        "hCenter": 12.49609375,
+                        "textAlign": "center"
                     },
                     "printElementType":
                     {
-                        "title": "文本",
+                        "title": "这是更新后的元素",
                         "type": "text"
                     }
                 },
                 {
                     "options":
                     {
-                        "left": 21,
-                        "top": 28.5,
-                        "height": 32,
-                        "width": 120,
-                        "field": "barcode",
-                        "testData": "XS888888888",
-                        "fontSize": 12,
-                        "lineHeight": 18,
-                        "textType": "barcode",
+                        "left": 14,
+                        "top": 25.5,
+                        "height": 2,
+                        "width": 141,
+                        "borderWidth": "0.75",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "right": 98.25,
+                        "bottom": 35.25,
+                        "vCenter": 45.75,
+                        "hCenter": 30.75
+                    },
+                    "printElementType":
+                    {
+                        "title": "横线",
+                        "type": "hline"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 99,
+                        "top": 27,
+                        "height": 14,
+                        "width": 80,
+                        "title": "电量显示版",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "qrCodeLevel": 0,
+                        "right": 179,
+                        "bottom": 44,
+                        "vCenter": 139,
+                        "hCenter": 37
+                    },
+                    "printElementType":
+                    {
+                        "title": "这是更新后的元素",
+                        "type": "text"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 14,
+                        "top": 27,
+                        "height": 14,
+                        "width": 73.5,
+                        "title": "颜色：上银下黑",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "qrCodeLevel": 0
+                    },
+                    "printElementType":
+                    {
+                        "title": "这是更新后的元素",
+                        "type": "text"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 28.5,
+                        "top": 43.5,
+                        "height": 26,
+                        "width": 111,
                         "title": "条形码",
-                        "qid": "barcode"
+                        "barcodeType": "code128",
+                        "testData": "{{barcode}}",
+                        "right": 137.25,
+                        "bottom": 68.75,
+                        "vCenter": 81.75,
+                        "hCenter": 55.75,
+                        "barWidth": "1",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "hideTitle": true
                     },
                     "printElementType":
                     {
                         "title": "条形码",
+                        "type": "barcode"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 0,
+                        "top": 70,
+                        "height": 12,
+                        "width": 140,
+                        "title": "{{barcode}}",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "fontSize": 10.5,
+                        "textAlign": "center",
+                        "qrCodeLevel": 0
+                    },
+                    "printElementType":
+                    {
+                        "title": "生产日期",
                         "type": "text"
                     }
                 }
@@ -52,16 +149,7 @@
             "paperNumberDisabled": true,
             "paperNumberContinue": true,
             "watermarkOptions":
-            {
-                "content": "",
-                "fillStyle": "rgba(184, 184, 184, 0.3)",
-                "fontSize": "14px",
-                "rotate": 25,
-                "width": 200,
-                "height": 200,
-                "timestamp": false,
-                "format": "YYYY-MM-DD HH:mm"
-            },
+            {},
             "panelLayoutOptions":
             {
                 "layoutType": "column",

@@ -12,7 +12,7 @@ import standardTemplate from '@/data/templates/product-standard.json';
 import largeTemplate from '@/data/templates/product-large.json';
 import smallTemplate from '@/data/templates/product-small.json';
 import wideTemplate from '@/data/templates/product-wide.json';
-import { colorTranslation } from '@/data/colors';
+
 
 // 模板映射
 const TEMPLATE_MAP = {
@@ -61,9 +61,9 @@ export default function HomePage() {
   const [model, setModel] = useState(modelList[0] || 'DL3500');
   const [selectedCapacity, setSelectedCapacity] = useState('');
   const [color, setColor] = useState('');
-  const [lang, setLang] = useState('中文'); // 控制标签语言
+  const [lang, setLang] = useState('中文');
 
-  // ===== 纸张设定 =====
+  // ===== 纸张设定（由模板自动控制） =====
   const [paperWidth, setPaperWidth] = useState(currentTemplateConfig.width);
   const [paperHeight, setPaperHeight] = useState(currentTemplateConfig.height);
 
@@ -155,58 +155,9 @@ export default function HomePage() {
         capacity: specText,
         voltage: voltage,
         barcode: barcodeText || '2026-0808',
-        lang: lang, // 传递语言信息
       });
     }
     return result;
-  };
-
-  // ===== 占位符替换函数 =====
-  const replacePlaceholders = (text, data, index) => {
-    if (!text || typeof text !== 'string') return text;
-
-    return text.replace(/\{\{([^}]+)\}\}/g, (match, field) => {
-      if (field === 'index') return String(index + 1);
-      const value = data[field];
-      return value !== undefined && value !== null ? String(value) : match;
-    });
-  };
-
-
-  // ===== 核心：渲染元素（根据语言替换文本） =====
-  const renderElement = (element, data, index) => {
-    const el = JSON.parse(JSON.stringify(element));
-    const isEnglish = data?.lang === '英文';
-
-    if (el.printElementType?.type === 'text' && el.options?.title) {
-      let title = el.options.title;
-
-      // 先替换占位符 {{model}} {{capacity}} {{color}} 等
-      title = replacePlaceholders(title, data, index);
-
-      // 🔥 关键：根据语言替换固定文本
-      // 1. 处理 "颜色：" 或 "Color: "
-      if (title.includes('颜色：') || title.includes('Color:')) {
-        // 翻译颜色值
-        const colorValue = data?.color || '';
-        const translatedColor = isEnglish
-          ? (colorTranslation['英文'][colorValue] || colorValue)
-          : colorValue;
-        title = isEnglish ? `Color: ${translatedColor}` : `颜色：${translatedColor}`;
-      }
-      // 2. 处理 "电量显示版" 或 "Battery Display"
-      if (title === '电量显示版' || title.includes('电量显示版')) {
-        title = isEnglish ? 'Power Display' : '电量显示版';
-      }
-
-      el.options.title = title;
-    }
-
-    if (el.printElementType?.type === 'barcode' && el.options?.testData) {
-      el.options.testData = replacePlaceholders(el.options.testData, data, index);
-    }
-
-    return el;
   };
 
   // 2. 核心：动态生成模板结构
@@ -232,12 +183,38 @@ export default function HomePage() {
       });
 
       panelCopy.index = index;
-      panelCopy.name = `${dataItem.model || 'Label'}-${index + 1}`;
+      panelCopy.name = `${dataItem.model || '标签'}-${index + 1}`;
 
       return panelCopy;
     });
 
     return { panels };
+  };
+
+  // ===== 元素渲染函数 =====
+  const renderElement = (element, data, index) => {
+    const el = JSON.parse(JSON.stringify(element));
+
+    if (el.printElementType?.type === 'text' && el.options?.title) {
+      el.options.title = replacePlaceholders(el.options.title, data, index);
+    }
+
+    if (el.printElementType?.type === 'barcode' && el.options?.testData) {
+      el.options.testData = replacePlaceholders(el.options.testData, data, index);
+    }
+
+    return el;
+  };
+
+  // ===== 占位符替换函数 =====
+  const replacePlaceholders = (text, data, index) => {
+    if (!text || typeof text !== 'string') return text;
+
+    return text.replace(/\{\{([^}]+)\}\}/g, (match, field) => {
+      if (field === 'index') return String(index + 1);
+      const value = data[field];
+      return value !== undefined && value !== null ? String(value) : match;
+    });
   };
 
   // 组件首次挂载时初始化
@@ -252,8 +229,6 @@ export default function HomePage() {
   }, [selectedTemplateId]);
 
   const isProduct = activeType === 'product';
-
-
 
   return (
     <main className="p-8 max-w-6xl mx-auto font-sans"
@@ -289,7 +264,6 @@ export default function HomePage() {
           📋 外箱标签
         </button>
       </div>
-
       {/* 模板选择区 */}
       <div className="border border-gray-200 p-6 rounded-xl bg-gray-50 shadow-sm space-y-5">
         <div>
@@ -343,18 +317,17 @@ export default function HomePage() {
                 </select>
               </div>
 
-              {/* 中英文 - 控制标签语言 */}
+              {/* 中英文 */}
               <div>
-                <label className="block text-sm font-medium text-gray-600">标签语言</label>
+                <label className="block text-sm font-medium text-gray-600">中英文</label>
                 <select
                   value={lang}
                   onChange={(e) => setLang(e.target.value)}
                   className="mt-1 w-full p-2 border border-gray-300 rounded-md bg-white"
                 >
                   <option value="中文">中文</option>
-                  <option value="英文">English</option>
+                  <option value="英文">英文</option>
                 </select>
-                <span className="text-xs text-gray-400 block mt-1">控制打印标签的语言</span>
               </div>
 
               {/* 容量 */}
@@ -415,10 +388,9 @@ export default function HomePage() {
                 className="w-full px-2.5 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-
             {/* 当前选择摘要 */}
             <div className="mt-3 text-xs text-gray-500 bg-white p-2 rounded border border-gray-200">
-              预览数据: Model: {model} ｜ 标签语言: {lang} ｜ {getDisplayCapacity()} ｜ {color} ｜ 条形码: {barcodeText}
+              预览数据: Model: {model} ｜ {lang} ｜ {getDisplayCapacity()} ｜ {color} ｜ 条形码: {barcodeText}
             </div>
           </div>
         )}
@@ -440,6 +412,7 @@ export default function HomePage() {
           <span className="text-xs text-gray-400">(切换模板自动调整)</span>
         </div>
 
+        {/* 打印执行按钮 */}
         {/* 打印执行按钮 */}
         <div className="flex items-center gap-3 border-t pt-4">
           <span className="font-semibold text-gray-700 text-sm">🖨️</span>

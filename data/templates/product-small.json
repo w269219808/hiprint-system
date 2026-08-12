@@ -1,137 +1,162 @@
 {
-  "panels": [
-    {
-      "index": 0,
-      "name": 1,
-      "height": 30,
-      "width": 60,
-      "paperHeader": 49.5,
-      "paperFooter": 78.78787878787878,
-      "printElements": [
+    "panels":
+    [
         {
-          "options": {
-            "left": 4.5,
-            "top": 22.5,
-            "height": 39,
-            "width": 157,
-            "title": "条形码",
-            "barcodeType": "code128",
-            "testData": "2026-0808",
-            "right": 163.75,
-            "bottom": 50.25,
-            "vCenter": 85.25,
-            "hCenter": 33,
-            "barWidth": "1",
-            "coordinateSync": false,
-            "widthHeightSync": false,
-            "lineHeight": 12
-          },
-          "printElementType": {
-            "title": "条形码",
-            "type": "barcode"
-          }
-        },
-        {
-          "options": {
-            "left": 3,
-            "top": 61.5,
-            "height": 17,
-            "width": 100,
-            "title": "{{capacity}}\n",
-            "coordinateSync": false,
-            "widthHeightSync": false,
-            "fontSize": 10.5,
-            "fontWeight": "bold",
-            "qrCodeLevel": 0,
-            "right": 87.75,
-            "bottom": 77.75,
-            "vCenter": 43.5,
-            "hCenter": 69.25
-          },
-          "printElementType": {
-            "type": "text"
-          }
-        },
-        {
-          "options": {
-            "left": 6,
-            "top": 4.5,
-            "height": 18,
-            "width": 157.5,
-            "title": "Portable lithium battery\n",
-            "coordinateSync": false,
-            "widthHeightSync": false,
-            "fontFamily": "Microsoft YaHei",
-            "fontSize": 13.5,
-            "textAlign": "center",
-            "qrCodeLevel": 0,
-            "right": 123.75,
-            "bottom": 13.5,
-            "vCenter": 63.75,
-            "hCenter": 8.625
-          },
-          "printElementType": {
-            "type": "text"
-          }
-        },
-        {
-          "options": {
-            "left": 103.5,
-            "top": 57,
-            "height": 21,
-            "width": 105,
-            "title": "{{color}}\n",
-            "coordinateSync": false,
-            "widthHeightSync": false,
-            "fontFamily": "Microsoft YaHei",
-            "fontSize": 16.5,
-            "textAlign": "center",
-            "textContentVerticalAlign": "middle",
-            "qrCodeLevel": 0,
-            "right": 158.25,
-            "bottom": 77.25,
-            "vCenter": 130.5,
-            "hCenter": 66.75
-          },
-          "printElementType": {
-            "title": "文本",
-            "type": "text"
-          }
-        },
-        {
-          "options": {
-            "left": 2,
-            "top": 60,
-            "height": 18,
-            "width": 105
-          },
-          "printElementType": {
-            "title": "矩形",
-            "type": "rect"
-          }
-        },
-        {
-          "options": {
-            "left": 110,
-            "top": 60,
-            "height": 18,
-            "width": 55
-          },
-          "printElementType": {
-            "title": "矩形",
-            "type": "rect"
-          }
+            "index": 0,
+            "name": 1,
+            "height": 30,
+            "width": 60,
+            "paperHeader": 3,
+            "paperFooter": 82.5,
+            "printElements":
+            [
+                {
+                    "options":
+                    {
+                        "left": 0,
+                        "top": 6,
+                        "height": 16,
+                        "width": 169,
+                        "title": "{{model}}-{{capacity}}",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "fontSize": 10,
+                        "fontWeight": "bolder",
+                        "textContentVerticalAlign": "middle",
+                        "qrCodeLevel": 0,
+                        "right": 91.75,
+                        "bottom": 22.49609375,
+                        "vCenter": 56.75,
+                        "hCenter": 12.49609375,
+                        "textAlign": "center"
+                    },
+                    "printElementType":
+                    {
+                        "title": "这是更新后的元素",
+                        "type": "text"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 14,
+                        "top": 22,
+                        "height": 2,
+                        "width": 141,
+                        "borderWidth": "0.75",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "right": 98.25,
+                        "bottom": 35.25,
+                        "vCenter": 45.75,
+                        "hCenter": 30.75
+                    },
+                    "printElementType":
+                    {
+                        "title": "横线",
+                        "type": "hline"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 20,
+                        "top": 24,
+                        "height": 14,
+                        "width": 73.5,
+                        "title": "颜色：{{color}}",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "qrCodeLevel": 0,
+                        "textContentVerticalAlign": "middle"
+                    },
+                    "printElementType":
+                    {
+                        "title": "这是更新后的元素",
+                        "type": "text"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 99,
+                        "top": 24,
+                        "height": 14,
+                        "width": 68,
+                        "title": "电量显示版",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "qrCodeLevel": 0,
+                        "right": 179,
+                        "bottom": 44,
+                        "vCenter": 139,
+                        "hCenter": 37,
+                        "textContentVerticalAlign": "middle"
+                    },
+                    "printElementType":
+                    {
+                        "title": "这是更新后的元素",
+                        "type": "text"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 28.5,
+                        "top": 40,
+                        "height": 25,
+                        "width": 110,
+                        "title": "条形码",
+                        "barcodeType": "code128",
+                        "testData": "{{barcode}}",
+                        "right": 137.25,
+                        "bottom": 68.75,
+                        "vCenter": 81.75,
+                        "hCenter": 55.75,
+                        "barWidth": "1",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "hideTitle": true
+                    },
+                    "printElementType":
+                    {
+                        "title": "条形码",
+                        "type": "barcode"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 1.5,
+                        "top": 65,
+                        "height": 12,
+                        "width": 140,
+                        "title": "{{barcode}}",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "fontSize": 9.75,
+                        "textAlign": "center",
+                        "qrCodeLevel": 0
+                    },
+                    "printElementType":
+                    {
+                        "title": "生产日期",
+                        "type": "text"
+                    }
+                }
+            ],
+            "paperNumberLeft": 140,
+            "paperNumberTop": 63,
+            "paperNumberDisabled": true,
+            "paperNumberContinue": true,
+            "watermarkOptions":
+            {},
+            "panelLayoutOptions":
+            {
+                "layoutType": "column",
+                "layoutRowGap": 0,
+                "layoutColumnGap": 0
+            }
         }
-      ],
-      "paperNumberLeft": 160.5,
-      "paperNumberTop": 58.5,
-      "paperNumberDisabled": true,
-      "paperNumberContinue": true,
-      "panelLayoutOptions": {
-        "layoutType": "column",
-        "layoutRowGap": 0,
-        "layoutColumnGap": 0
-      }
-    }
-  ]
+    ]
 }

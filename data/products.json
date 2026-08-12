@@ -1,34 +1,42 @@
 {
-  "DL3500": { "voltage": "14.8V", "capacity": "3500mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑", "black"] },
-  "DL5000": { "voltage": "14.8V", "capacity": "5000mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
-  "DL7000": { "voltage": "14.8V", "capacity": "7000mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
-  "DL10000": { "voltage": "14.8V", "capacity": "10000mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
-  "DX35": { "voltage": "14.8V", "capacity": "3500mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
-  "DX50": { "voltage": "14.8V", "capacity": "5000mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
-  "DX70": { "voltage": "14.8V", "capacity": "7000mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
-  "DX10": { "voltage": "14.8V", "capacity": "10000mAh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
-  "DN35T": { "voltage": "14.8V", "capacity": "3500mAh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"] },
-  "DN50T": { "voltage": "14.8V", "capacity": "5000mAh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"] },
-  "DN70T": { "voltage": "14.8V", "capacity": "7000mAh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"] },
-  "DN10T": { "voltage": "14.8V", "capacity": "10000mAh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"] },
-  "GN20F": { "voltage": "14.8V", "capacity": "20000mAh", "colors": ["银色", "黑色", "香槟金"] },
-  "GN25F": { "voltage": "14.8V", "capacity": "25000mAh", "colors": ["银色", "黑色", "香槟金"] },
-  "GN10F": { "voltage": "14.8V", "capacity": "10000mAh", "colors": ["银色", "黑色", "香槟金"] },
-  "DN20A": { "voltage": "14.8V", "capacity": "20000mAh", "colors": ["黑色", "黑红色"] },
-  "GP20A": { "voltage": "14.8V", "capacity": "20000mAh", "colors": ["黑色", "黑红色"] },
-  "dx15-10a": { "voltage": "14.8V", "capacity": "10000mAh", "colors": ["黑色", "蓝色"] },
-  "dx15-13.5a": { "voltage": "14.8V", "capacity": "13500mAh", "colors": ["黑色", "蓝色"] },
-  "dx15-15a": { "voltage": "14.8V", "capacity": "15000mAh", "colors": ["黑色", "蓝色"] },
+  "DL3500": { "voltage": "14.8V", "capacity": "3.5Ah-51.8Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+  "DL5000": { "voltage": "14.8V", "capacity": "5.0Ah-74Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+  "DL7000": { "voltage": "14.8V", "capacity": "7.0Ah-103.6Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+  "DL10000": { "voltage": "14.8V", "capacity": "10.0Ah-148Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+  "DX35": { "voltage": "14.8V", "capacity": "3.5Ah-51.8Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+  "DX50": { "voltage": "14.8V", "capacity": "5.0Ah-74Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+  "DX70": { "voltage": "14.8V", "capacity": "7.0Ah103.6Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+  "DX10": { "voltage": "14.8V", "capacity": "10.0Ah-148Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"] },
+  "DN35T": { "voltage": "14.8V", "capacity": "3.5Ah-51.8Wh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"] },
+  "DN50T": { "voltage": "14.8V", "capacity": "5.0Ah-74Wh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"] },
+  "DN70T": { "voltage": "14.8V", "capacity": "7.0Ah103.6Wh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"] },
+  "DN10T": { "voltage": "14.8V", "capacity": "10.0Ah-148Wh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"] },
+  "GN20F": { "voltage": "14.8V", "capacity": "20.0Ah-296Wh", "colors": ["银色", "黑色", "香槟金"] },
+  "GN25F": { "voltage": "12.0V", "capacity": "25.0Ah-370Wh", "colors": ["银色", "黑色", "香槟金"] },
+  "GN10F": { "voltage": "24.0V", "capacity": "10.0Ah-148Wh", "colors": ["银色", "黑色", "香槟金"] },
+  "DN20A": { "voltage": "14.8V", "capacity": "20.0Ah-296Wh", "colors": ["黑色", "黑红色"] },
+  "GP20A": { "voltage": "14.8V", "capacity": "20.0Ah-296Wh", "colors": ["黑色", "黑红色"] },
+  "dx15": {
+    "voltage": "14.8V",
+    "isMultiCapacity": true,
+    "capacities": [
+      { "label": "10.0Ah-14.8Wh", "colors": ["黑色", "蓝色"] },
+      { "label": "13.5Ah-199.8Wh", "colors": ["黑色", "蓝色"] },
+      { "label": "15.0Ah-222Wh", "colors": ["黑色", "蓝色"] }
+    ]
+  },
   "DN1700NS": {
     "voltage": "14.8V",
     "isMultiCapacity": true,
     "capacities": [
-      { "label": "7800mAh", "colors": ["黑色", "蓝色", "白色"] },
-      { "label": "9600mAh", "colors": ["黑色", "蓝色", "白色"] },
-      { "label": "10400mAh", "colors": ["黑色", "蓝色", "白色"] },
-      { "label": "11600mAh", "colors": ["黑色", "蓝色", "白色"] },
-      { "label": "12800mAh", "colors": ["黑色", "蓝色", "白色"] },
-      { "label": "13600mAh", "colors": ["黑色", "蓝色", "白色"] }
+      { "label": "7.8Ah", "colors": ["黑色", "蓝色", "白色"] },
+      { "label": "9.6Ah", "colors": ["黑色", "蓝色", "白色"] },
+      { "label": "10.4Ah", "colors": ["黑色", "蓝色", "白色"] },
+      { "label": "11.6Ah", "colors": ["黑色", "蓝色", "白色"] },
+      { "label": "12.8Ah", "colors": ["黑色", "蓝色", "白色"] },
+      { "label": "13.6Ah", "colors": ["黑色", "蓝色", "白色"] },
+      { "label": "14.0Ah", "colors": ["黑色", "蓝色", "白色"] }
     ]
   }
+
 }
