@@ -1,0 +1,73 @@
+{
+    "panels":
+    [
+        {
+            "index": 0,
+            "name": 1,
+            "height": 30,
+            "width": 60,
+            "paperHeader": 0,
+            "paperFooter": 85.03937007874016,
+            "printElements":
+            [
+                {
+                    "options":
+                    {
+                        "left": 97.5,
+                        "top": 187.5,
+                        "height": 9.75,
+                        "width": 120,
+                        "title": "文本"
+                    },
+                    "printElementType":
+                    {
+                        "title": "文本",
+                        "type": "text"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 21,
+                        "top": 28.5,
+                        "height": 32,
+                        "width": 120,
+                        "field": "barcode",
+                        "testData": "XS888888888",
+                        "fontSize": 12,
+                        "lineHeight": 18,
+                        "textType": "barcode",
+                        "title": "条形码",
+                        "qid": "barcode"
+                    },
+                    "printElementType":
+                    {
+                        "title": "条形码",
+                        "type": "text"
+                    }
+                }
+            ],
+            "paperNumberLeft": 140,
+            "paperNumberTop": 63,
+            "paperNumberDisabled": true,
+            "paperNumberContinue": true,
+            "watermarkOptions":
+            {
+                "content": "",
+                "fillStyle": "rgba(184, 184, 184, 0.3)",
+                "fontSize": "14px",
+                "rotate": 25,
+                "width": 200,
+                "height": 200,
+                "timestamp": false,
+                "format": "YYYY-MM-DD HH:mm"
+            },
+            "panelLayoutOptions":
+            {
+                "layoutType": "column",
+                "layoutRowGap": 0,
+                "layoutColumnGap": 0
+            }
+        }
+    ]
+}
