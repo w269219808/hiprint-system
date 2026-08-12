@@ -117,7 +117,7 @@
                         "bottom": 68.75,
                         "vCenter": 81.75,
                         "hCenter": 55.75,
-                        "barWidth": "1",
+                        "barWidth": "1.5",
                         "coordinateSync": false,
                         "widthHeightSync": false,
                         "hideTitle": true

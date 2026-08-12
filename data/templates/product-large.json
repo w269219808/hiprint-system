@@ -104,8 +104,8 @@
                     {
                         "left": 27,
                         "top": 48,
-                        "height": 36,
-                        "width": 163.5,
+                        "height": 33,
+                        "width": 165,
                         "title": "条形码",
                         "barcodeType": "code128",
                         "testData": "{{barcode}}",
@@ -113,7 +113,7 @@
                         "bottom": 86.25,
                         "vCenter": 108.75,
                         "hCenter": 68.25,
-                        "barWidth": "1",
+                        "barWidth": "2",
                         "coordinateSync": false,
                         "widthHeightSync": false,
                         "hideTitle": true
