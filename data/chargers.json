@@ -1,0 +1,35 @@
+{
+  "CH-1.5A": {
+    "model": "CH-1.5A",
+    "inputVoltage": "AC100V-245V",
+    "inputCurrent": "1.5A",
+    "outputVoltage": "DC16.8V-1.5A",
+    "colors": ["黑色","白色"],
+    "isMultiColor": true
+  },
+  "CH-2A": {
+    "model": "CH-2A",
+    "inputVoltage": "AC100V-245V",
+    "inputCurrent": "2A",
+    "outputVoltage": "DC16.8V-2A",
+    "colors": ["黑色","白色"],
+    "isMultiColor": true
+  },
+  "CH-3A": {
+    "model": "CH-3A",
+    "inputVoltage": "AC100V-245V",
+    "inputCurrent": "3A",
+    "outputVoltage": "DC16.8V-3A",
+    "colors": ["黑色","白色"],
+    "isMultiColor": true
+  },
+  "CH-5A": {
+    "model": "CH-5A",
+    "inputVoltage": "AC100V-245V",
+    "inputCurrent": "5A",
+    "outputVoltage": "DC16.8V-5A",
+    "colors": ["黑色","白色"],
+    "isMultiColor": true
+  }
+
+}

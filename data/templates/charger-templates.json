@@ -1,0 +1,22 @@
+{
+  "templates": [
+    {
+      "id": "charger-standard",
+      "name": "标准充电器标签",
+      "templateFile": "charger-standard.json",
+      "width": 60,
+      "height": 30,
+      "preview": "🔌 60*30标准",
+      "default": true
+    },
+    {
+      "id": "charger-compact",
+      "name": "紧凑充电器标签",
+      "templateFile": "charger-compact.json",
+      "width": 60,
+      "height": 30,
+      "preview": "📏 紧凑",
+      "default": false
+    }
+  ]
+}

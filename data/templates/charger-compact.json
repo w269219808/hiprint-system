@@ -1,0 +1,151 @@
+{
+    "panels":
+    [
+        {
+            "index": 0,
+            "name": 1,
+            "height": 40,
+            "width": 80,
+            "paperHeader": 273,
+            "paperFooter": 279,
+            "printElements":
+            [
+                {
+                    "options":
+                    {
+                        "left": 0,
+                        "top": 3,
+                        "height": 18,
+                        "width": 169,
+                        "title": "Fishing Reel Battery Charger",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "fontFamily": "Microsoft YaHei",
+                        "fontSize": 9.75,
+                        "fontWeight": "bold",
+                        "textAlign": "center",
+                        "qrCodeLevel": 0,
+                        "right": 184.75,
+                        "bottom": 20.25,
+                        "vCenter": 100.25,
+                        "hCenter": 11.25
+                    },
+                    "printElementType":
+                    {
+                        "title": "文本",
+                        "type": "text"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 13.5,
+                        "top": 18,
+                        "height": 14,
+                        "width": 120,
+                        "title": "产品编码:{{barcode}}",
+                        "right": 133.5,
+                        "bottom": 32.25,
+                        "vCenter": 73.5,
+                        "hCenter": 27.375,
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "qrCodeLevel": 0
+                    },
+                    "printElementType":
+                    {
+                        "title": "这是更新后的元素",
+                        "type": "text"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 13.5,
+                        "top": 31.5,
+                        "height": 14,
+                        "width": 120,
+                        "title": "输入电压: {{inputVoltage}}",
+                        "right": 135,
+                        "bottom": 44.75,
+                        "vCenter": 75,
+                        "hCenter": 37.75,
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "qrCodeLevel": 0
+                    },
+                    "printElementType":
+                    {
+                        "title": "这是更新后的元素",
+                        "type": "text"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 13.5,
+                        "top": 45,
+                        "height": 14,
+                        "width": 120,
+                        "title": "输出电压: {{outputVoltage}} {{outputCurrent}}",
+                        "right": 135,
+                        "bottom": 58.5,
+                        "vCenter": 75,
+                        "hCenter": 53.625,
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "qrCodeLevel": 0
+                    },
+                    "printElementType":
+                    {
+                        "title": "这是更新后的元素",
+                        "type": "text"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 10.5,
+                        "top": 57,
+                        "height": 19.5,
+                        "width": 153,
+                        "title": "this is this is this is this is this is this is this is this is \n",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "qrCodeLevel": 0,
+                        "right": 162,
+                        "bottom": 79.5,
+                        "vCenter": 85.5,
+                        "hCenter": 69.75
+                    },
+                    "printElementType":
+                    {
+                        "title": "这是更新后的元素",
+                        "type": "text"
+                    }
+                }
+            ],
+            "paperNumberLeft": 139.5,
+            "paperNumberTop": 63,
+            "paperNumberDisabled": true,
+            "paperNumberContinue": true,
+            "watermarkOptions":
+            {
+                "content": "vue-plugin-hiprint",
+                "rotate": 25,
+                "timestamp": true,
+                "format": "YYYY-MM-DD HH:mm",
+                "fillStyle": "rgba(184, 184, 184, 0.3)",
+                "fontSize": "14px",
+                "width": 200,
+                "height": 200
+            },
+            "panelLayoutOptions":
+            {
+                "layoutType": "column",
+                "layoutRowGap": 0,
+                "layoutColumnGap": 0
+            }
+        }
+    ]
+}

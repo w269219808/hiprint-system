@@ -1,157 +1,49 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import HiprintButton from '../HiprintButton';
-
-// 引入拆分后的 2 个独立文件
-import productsData from '@/data/products.json';
-import baseTemplate from '@/data/labelTemplate.json';
+import { useState } from 'react';
+import HiprintButton from '@/components/HiprintButton';
+import { ProductPanel, ChargerPanel } from '@/components/labels';
 
 const LABEL_TYPES = [
   { key: 'product', label: '📦 产品标签' },
-  { key: 'carton', label: '📋 外箱标签' },
+  { key: 'charger', label: '🔌 充电器标签' },
   { key: 'customer', label: '👤 装箱号标签' },
   { key: 'company', label: '🏢 公司标签' },
 ];
 
-// 自动获取当天的日期字符串（格式如：2026-08-08）
-const getTodayDateString = () => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
 export default function HomePage() {
   const [activeType, setActiveType] = useState('product');
-  const [barcodeText, setBarcodeText] = useState(getTodayDateString());
-  const [isSpecial, setIsSpecial] = useState(false);
 
-  // ===== 产品选择 =====
-  const modelList = Object.keys(productsData);
-  const [model, setModel] = useState(modelList[0] || 'DL3500');
-  const [selectedCapacity, setSelectedCapacity] = useState('');
-  const [color, setColor] = useState('');
-  const [lang, setLang] = useState('中文');
-
-  // ===== 纸张设定 (默认 60x30mm) =====
-  const [paperWidth, setPaperWidth] = useState(60);
-  const [paperHeight, setPaperHeight] = useState(30);
-
-  // ===== 打印份数 =====
-  const [copies, setCopies] = useState(1);
-
-  // 当前选中的产品对象
-  const currentProduct = productsData[model];
-  const isMultiCapacity = currentProduct?.isMultiCapacity === true;
-
-  // 获取可选项
-  const capacityOptions = isMultiCapacity
-    ? (currentProduct?.capacities || []).map((c) => c.label)
-    : [];
-
-  const getColorOptions = () => {
-    if (!currentProduct) return [];
-    if (isMultiCapacity) {
-      const matched = (currentProduct.capacities || []).find(
-        (c) => c.label === selectedCapacity
-      );
-      return matched?.colors || [];
-    }
-    return currentProduct.colors || [];
-  };
-
-  const getDisplayCapacity = () => {
-    if (!currentProduct) return '';
-    if (isMultiCapacity) {
-      return selectedCapacity || '请选择容量';
-    }
-    return currentProduct.capacity || '';
-  };
-
-  const colorOptions = getColorOptions();
-
-  // 初始化和切换型号的逻辑
-  const applyModelDefaults = (targetModel) => {
-    const product = productsData[targetModel];
-    if (!product) return;
-
-    if (product.isMultiCapacity) {
-      const firstCap = product.capacities?.[0]?.label || '';
-      setSelectedCapacity(firstCap);
-      const matchedColors =
-        product.capacities?.find((c) => c.label === firstCap)?.colors || [];
-      setColor(matchedColors[0] || '');
-    } else {
-      setSelectedCapacity(product.capacity || '');
-      setColor(product.colors?.[0] || '');
-    }
-  };
-
-  const handleModelChange = (newModel) => {
-    setModel(newModel);
-    applyModelDefaults(newModel);
-  };
-
-  const handleCapacityChange = (newCapacity) => {
-    setSelectedCapacity(newCapacity);
-    const matched = (currentProduct?.capacities || []).find(
-      (c) => c.label === newCapacity
-    );
-    const colors = matched?.colors || [];
-    setColor(colors[0] || '');
-  };
-
-  const handleTypeChange = (typeKey) => {
-    setActiveType(typeKey);
-  };
-
-  // 1. 构建打印数据（注入到 Hiprint 模板中的实际变量）
-  const getPrintData = () => {
-    const result = [];
-    const voltage = currentProduct?.voltage || '14.8V';
-    const capacityStr = getDisplayCapacity();
-    const specText = `${voltage} - ${capacityStr}`;
-
-    for (let i = 0; i < copies; i++) {
-      result.push({
-        model: `Model: ${model}`,
-        color: color,
-        capacity: specText,
-        barcode: barcodeText || '2026-0808',
-      });
-    }
-    return result;
-  };
-
-  // 2. 核心：基于独立排版 JSON (baseTemplate) 动态生成模板结构
-  const buildTemplate = () => {
-    if (!baseTemplate || !baseTemplate.panels) {
-      return { panels: [{ width: paperWidth, height: paperHeight, printElements: [] }] };
-    }
-
-    // 深拷贝解耦模板，修改纸张宽高
-    const templateCopy = JSON.parse(JSON.stringify(baseTemplate));
-    templateCopy.panels = templateCopy.panels.map((panel) => ({
-      ...panel,
-      width: paperWidth,
-      height: paperHeight,
-    }));
-
-    return templateCopy;
-  };
-
-  // 组件首次挂载时初始化一次默认值
-  useEffect(() => {
-    applyModelDefaults(model);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // 当前面板的数据
+  const [currentPrintData, setCurrentPrintData] = useState([]);
+  const [currentTemplate, setCurrentTemplate] = useState({ panels: [] });
+  const [paperInfo, setPaperInfo] = useState({ width: 100, height: 60, name: '标准' });
 
   const isProduct = activeType === 'product';
+  const isCharger = activeType === 'charger';
+  const isCustomer = activeType === 'customer';
+  const isCompany = activeType === 'company';
+
+  // 处理子组件数据变化
+  const handleDataChange = (data) => {
+    setCurrentPrintData(data.printData || []);
+    setCurrentTemplate(data.template || { panels: [] });
+    setPaperInfo({
+      width: data.paperSize?.width || 100,
+      height: data.paperSize?.height || 60,
+      name: data.templateName || '标准',
+    });
+  };
 
   return (
-    <main className="p-8 max-w-4xl mx-auto font-sans">
+    <main
+      className="p-8 max-w-6xl mx-auto font-sans"
+      style={{
+        width: '100%',
+        maxWidth: '850px',
+        minWidth: '300px'
+      }}
+    >
       <h1 className="text-2xl font-bold mb-6 text-center">
         🏷️ 蓝铭电子标签打印控制台
       </h1>
@@ -161,7 +53,7 @@ export default function HomePage() {
         {LABEL_TYPES.map((type) => (
           <button
             key={type.key}
-            onClick={() => handleTypeChange(type.key)}
+            onClick={() => setActiveType(type.key)}
             className={`px-4 py-2 rounded-lg border transition-all ${
               activeType === type.key
                 ? 'bg-blue-600 text-white border-blue-600 shadow-md'
@@ -173,187 +65,67 @@ export default function HomePage() {
         ))}
       </div>
 
+      {/* 核心内容区 */}
       <div className="border border-gray-200 p-6 rounded-xl bg-gray-50 shadow-sm space-y-5">
-        {/* 产品选择区 */}
-        {isProduct && (
-          <div>
-            <h3 className="font-semibold text-gray-700 border-b pb-2 mb-3">
-              🎯 产品选择
-            </h3>
 
-            <div className="grid grid-cols-4 gap-4">
-              {/* 型号 */}
-              <div>
-                <label className="block text-sm font-medium text-gray-600">型号</label>
-                <select
-                  value={model}
-                  onChange={(e) => handleModelChange(e.target.value)}
-                  className="mt-1 w-full p-2 border border-gray-300 rounded-md bg-white"
-                >
-                  {modelList.map((m) => (
-                    <option key={m} value={m}>
-                      {m}
-                    </option>
-                  ))}
-                </select>
-              </div>
+        {/* 产品面板 */}
+        {isProduct && <ProductPanel onDataChange={handleDataChange} />}
 
-              {/* 中英文 */}
-              <div>
-                <label className="block text-sm font-medium text-gray-600">中英文</label>
-                <select
-                  value={lang}
-                  onChange={(e) => setLang(e.target.value)}
-                  className="mt-1 w-full p-2 border border-gray-300 rounded-md bg-white"
-                >
-                  <option value="中文">中文</option>
-                  <option value="英文">英文</option>
-                </select>
-              </div>
+        {/* 充电器面板 */}
+        {isCharger && <ChargerPanel onDataChange={handleDataChange} />}
 
-              {/* 容量 */}
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  容量 {isMultiCapacity && <span className="text-xs text-blue-500">（可切换）</span>}
-                </label>
-                {isMultiCapacity ? (
-                  <select
-                    value={selectedCapacity}
-                    onChange={(e) => handleCapacityChange(e.target.value)}
-                    className="mt-1 w-full p-2 border border-gray-300 rounded-md bg-white"
-                  >
-                    {capacityOptions.map((cap) => (
-                      <option key={cap} value={cap}>
-                        {cap}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <div className="mt-1 w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700">
-                    {getDisplayCapacity() || '—'}
-                  </div>
-                )}
-              </div>
-
-              {/* 颜色 */}
-              <div>
-                <label className="block text-sm font-medium text-gray-600">颜色</label>
-                <select
-                  value={color}
-                  onChange={(e) => setColor(e.target.value)}
-                  className="mt-1 w-full p-2 border border-gray-300 rounded-md bg-white"
-                >
-                  {colorOptions.length > 0 ? (
-                    colorOptions.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))
-                  ) : (
-                    <option value="">暂无颜色</option>
-                  )}
-                </select>
-              </div>
-            </div>
-
-            {/* 条形码设置 */}
-            <div className="my-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                条形码内容 (Code128):
-              </label>
-              <input
-                type="text"
-                value={barcodeText}
-                onChange={(e) => setBarcodeText(e.target.value)}
-                placeholder="请输入条形码字符（如：2026-0808）"
-                className="w-full px-2.5 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div className="mt-3 flex items-center gap-3">
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-600 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={isSpecial}
-                  onChange={(e) => setIsSpecial(e.target.checked)}
-                />
-                特殊标签（MAG CRUISR 款）
-              </label>
-              {isSpecial && (
-                <span className="text-xs text-orange-500">
-                  ⚠️ 将使用特殊布局
-                </span>
-              )}
-            </div>
-
-            {/* 当前选择摘要 */}
-            <div className="mt-3 text-xs text-gray-500 bg-white p-2 rounded border border-gray-200">
-              预览数据: Model: {model} ｜ {lang} ｜ {getDisplayCapacity()} ｜ {color} ｜ 条形码: {barcodeText}
-            </div>
+        {/* 装箱号标签 */}
+        {isCustomer && (
+          <div className="text-center py-8 text-gray-500">
+            👤 装箱号标签开发中...
           </div>
         )}
 
-        {/* 纸张设定 */}
-        <div>
-          <h3 className="font-semibold text-gray-700 border-b pb-2 mb-3">📐 纸张尺寸</h3>
-          <div className="grid grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-600">宽度 (mm)</label>
-              <input
-                type="number"
-                value={paperWidth}
-                onChange={(e) => setPaperWidth(Number(e.target.value))}
-                className="mt-1 w-full p-2 border border-gray-300 rounded-md bg-white"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-600">高度 (mm)</label>
-              <input
-                type="number"
-                value={paperHeight}
-                onChange={(e) => setPaperHeight(Number(e.target.value))}
-                className="mt-1 w-full p-2 border border-gray-300 rounded-md bg-white"
-              />
-            </div>
+        {/* 公司标签 */}
+        {isCompany && (
+          <div className="text-center py-8 text-gray-500">
+            🏢 公司标签开发中...
           </div>
+        )}
+
+        {/* 打印控制 */}
+        <div className="flex items-center gap-4 text-sm border-t pt-4 flex-wrap">
+          <span className="font-semibold text-gray-700">🖨️ 打印</span>
+          <span className="text-gray-400 text-xs">
+            生成 {currentPrintData.length} 个标签
+          </span>
+          <span className="text-gray-300">|</span>
+          <span className="text-gray-500">
+            📐 {paperInfo.width}×{paperInfo.height}mm
+          </span>
+          <span className="text-xs text-gray-400">
+            ({paperInfo.name})
+          </span>
         </div>
 
-        {/* 打印份数 */}
-        <div className="border-t pt-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-600">打印份数</label>
-              <input
-                type="number"
-                min="1"
-                value={copies}
-                onChange={(e) => setCopies(Number(e.target.value))}
-                className="mt-1 w-20 p-2 border border-gray-300 rounded-md bg-white"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* 打印执行按钮 */}
-        <div className="border-t pt-4">
+        {/* 打印按钮 */}
+        <div className="flex items-center gap-3 border-t pt-4">
+          <span className="font-semibold text-gray-700 text-sm">🖨️</span>
           <HiprintButton
-            templateData={buildTemplate()}
-            printData={getPrintData()}
-            label={`🔊 静默打印 (${getPrintData().length} 张)`}
+            templateData={currentTemplate}
+            printData={currentPrintData}
+            buttonText="🔊 预览打印"
+          />
+          <HiprintButton
+            templateData={currentTemplate}
+            printData={currentPrintData}
+            buttonText="🖨️ 直接打印"
+            silent={true}
           />
         </div>
       </div>
 
+      {/* 底部信息 */}
       <div className="mt-4 text-xs text-gray-400 border-t pt-3">
         当前标签类型: <strong>{activeType}</strong> ｜
-        {isProduct && (
-          <>
-            型号: <strong>{model}</strong> ｜
-            容量: <strong>{getDisplayCapacity()}</strong> ｜
-            颜色: <strong>{color}</strong> ｜
-          </>
-        )}
-        打印张数: <strong>{getPrintData().length}</strong>
+        模板: <strong>{paperInfo.name}</strong> ｜
+        纸张: <strong>{paperInfo.width}×{paperInfo.height}mm</strong> ｜
+        打印张数: <strong>{currentPrintData.length}</strong>
       </div>
     </main>
   );
