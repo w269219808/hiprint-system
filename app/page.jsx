@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import HiprintButton from '@/components/HiprintButton';
 import { ProductPanel, ChargerPanel } from '@/components/labels';
 
@@ -13,6 +13,7 @@ const LABEL_TYPES = [
 
 export default function HomePage() {
   const [activeType, setActiveType] = useState('product');
+  const productPanelRef = useRef(null);
 
   // 当前面板的数据
   const [currentPrintData, setCurrentPrintData] = useState([]);
@@ -33,6 +34,19 @@ export default function HomePage() {
       height: data.paperSize?.height || 60,
       name: data.templateName || '标准',
     });
+  };
+
+  // 打印前分配条形码序号（由产品面板生成新的条形码数据）
+  const handleBeforePrint = () => {
+    if (activeType === 'product' && productPanelRef.current?.allocateBarcodes) {
+      const bundle = productPanelRef.current.allocateBarcodes();
+      if (bundle?.printData) {
+        setCurrentPrintData(bundle.printData);
+        setCurrentTemplate(bundle.template || { panels: [] });
+        return bundle;
+      }
+    }
+    return null;
   };
 
   return (
@@ -69,7 +83,7 @@ export default function HomePage() {
       <div className="border border-gray-200 p-6 rounded-xl bg-gray-50 shadow-sm space-y-5">
 
         {/* 产品面板 */}
-        {isProduct && <ProductPanel onDataChange={handleDataChange} />}
+        {isProduct && <ProductPanel ref={productPanelRef} onDataChange={handleDataChange} />}
 
         {/* 充电器面板 */}
         {isCharger && <ChargerPanel onDataChange={handleDataChange} />}
@@ -110,12 +124,14 @@ export default function HomePage() {
             templateData={currentTemplate}
             printData={currentPrintData}
             buttonText="🔊 预览打印"
+            onBeforePrint={handleBeforePrint}
           />
           <HiprintButton
             templateData={currentTemplate}
             printData={currentPrintData}
             buttonText="🖨️ 直接打印"
             silent={true}
+            onBeforePrint={handleBeforePrint}
           />
         </div>
       </div>

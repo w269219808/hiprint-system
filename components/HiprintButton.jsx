@@ -7,7 +7,8 @@ export default function HiprintButton({
   printData,
   buttonText = "预览/导出标签",
   silent = false,
-  printerName = ''
+  printerName = '',
+  onBeforePrint
 }) {
   const [hiprintObj, setHiprintObj] = useState(null);
   const [isReady, setIsReady] = useState(false);
@@ -104,20 +105,20 @@ export default function HiprintButton({
   }, [silent, isReady, hiprintObj, printerName]);
 
   // ===== 3. 获取预览 HTML =====
-  const getPreviewHtml = (dataList) => {
-    if (!hiprintObj || !templateData) return null;
+  const getPreviewHtml = (dataList, template) => {
+    if (!hiprintObj || !template) return null;
 
     const holder = document.getElementById('hiprint-hidden-holder');
     if (!holder) return null;
     holder.innerHTML = '';
 
-    const customTemplate = new hiprintObj.PrintTemplate({ template: templateData });
+    const customTemplate = new hiprintObj.PrintTemplate({ template });
     customTemplate.design('#hiprint-hidden-holder');
 
     return new Promise((resolve) => {
       setTimeout(() => {
         // ===== 关键修复：如果模板已有多个 panel，只传 1 条数据 =====
-        const hasMultiplePanels = templateData?.panels && templateData.panels.length > 1;
+        const hasMultiplePanels = template?.panels && template.panels.length > 1;
         const finalDataList = hasMultiplePanels ? [{}] : dataList;
 
         const $htmlElements = customTemplate.getHtml(finalDataList);
@@ -136,10 +137,20 @@ export default function HiprintButton({
       return alert('打印组件未就绪或缺失模板/数据！');
     }
 
-    const dataList = Array.isArray(printData) ? printData : [printData];
+    let dataList = Array.isArray(printData) ? printData : [printData];
+    let template = templateData;
+
+    // ===== 打印前分配条形码序号 =====
+    if (onBeforePrint) {
+      const bundle = await onBeforePrint();
+      if (bundle) {
+        dataList = Array.isArray(bundle.printData) ? bundle.printData : [bundle.printData];
+        template = bundle.template || templateData;
+      }
+    }
 
     try {
-      const htmlContent = await getPreviewHtml(dataList);
+      const htmlContent = await getPreviewHtml(dataList, template);
       if (!htmlContent) return alert('生成预览失败！');
 
       const win = window.open('', '_blank');
@@ -219,20 +230,30 @@ export default function HiprintButton({
       return alert('⚠️ 未选择打印机！请在列表中选择一台打印机。');
     }
 
-    const dataList = Array.isArray(printData) ? printData : [printData];
+    let dataList = Array.isArray(printData) ? printData : [printData];
+    let template = templateData;
+
+    // ===== 打印前分配条形码序号 =====
+    if (onBeforePrint) {
+      const bundle = await onBeforePrint();
+      if (bundle) {
+        dataList = Array.isArray(bundle.printData) ? bundle.printData : [bundle.printData];
+        template = bundle.template || templateData;
+      }
+    }
 
     try {
-      const customTemplate = new hiprintObj.PrintTemplate({ template: templateData });
+      const customTemplate = new hiprintObj.PrintTemplate({ template });
 
       // ===== 关键修复：如果模板已有多个 panel，只传 1 条数据 =====
-      const hasMultiplePanels = templateData?.panels && templateData.panels.length > 1;
+      const hasMultiplePanels = template?.panels && template.panels.length > 1;
       const finalDataList = hasMultiplePanels ? [{}] : dataList;
 
       console.log('🖨️ 静默打印参数:', {
         printer: printer,
         dataCount: finalDataList.length,
         hasMultiplePanels: hasMultiplePanels,
-        panelCount: templateData?.panels?.length || 0
+        panelCount: template?.panels?.length || 0
       });
 
       customTemplate.print2(finalDataList, {
@@ -241,7 +262,7 @@ export default function HiprintButton({
         copies: finalDataList.length
       });
 
-      const totalLabels = hasMultiplePanels ? templateData.panels.length : dataList.length;
+      const totalLabels = hasMultiplePanels ? template.panels.length : dataList.length;
       alert(`✅ 打印任务已发送！共 ${totalLabels} 张标签`);
     } catch (error) {
       console.error('❌ 静默打印失败:', error);

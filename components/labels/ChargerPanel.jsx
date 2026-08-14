@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
 import chargersData from '@/data/chargers.json';
 import chargerTemplatesConfig from '@/data/templates/charger-templates.json';
 import chargerStandard from '@/data/templates/charger-standard.json';
-import chargerCompact from '@/data/templates/charger-compact.json';
+import chargerLarge from '@/data/templates/charger-large.json';
 
 // 模板映射
 const TEMPLATE_MAP = {
   'charger-standard.json': chargerStandard,
-  'charger-compact.json': chargerCompact,
+  'charger-large.json': chargerLarge,
 };
 
 // 获取默认模板

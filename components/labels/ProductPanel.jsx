@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import productsData from '@/data/products.json';
 import productTemplatesConfig from '@/data/templates/product-templates.json';
 import standardTemplate from '@/data/templates/product-standard.json';
@@ -8,6 +8,7 @@ import largeTemplate from '@/data/templates/product-large.json';
 import smallTemplate from '@/data/templates/product-small.json';
 import wideTemplate from '@/data/templates/product-wide.json';
 import { colorTranslation } from '@/data/colors';
+import { getNextBarcode, getPreviewBarcodes, allocateBarcodes } from '@/lib/barcodeCounter';
 
 // 模板映射
 const TEMPLATE_MAP = {
@@ -23,18 +24,11 @@ const getDefaultTemplate = () => {
   return defaultConfig || productTemplatesConfig.templates[0];
 };
 
-// 自动获取当天的日期字符串
-const getTodayDateString = () => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
-export default function ProductPanel({ onDataChange }) {
+const ProductPanel = forwardRef(function ProductPanel({ onDataChange }, ref) {
   // ===== 状态 =====
-  const [barcodeText, setBarcodeText] = useState(getTodayDateString());
+  // 初始为空字符串：避免服务端渲染时读取 localStorage/日期导致 hydration 不一致，
+  // 真实条形码在挂载后通过 useEffect 填充
+  const [barcodeText, setBarcodeText] = useState('');
   const [selectedTemplateId, setSelectedTemplateId] = useState(getDefaultTemplate().id);
   const [model, setModel] = useState('DL3500');
   const [selectedCapacity, setSelectedCapacity] = useState('');
@@ -154,11 +148,13 @@ export default function ProductPanel({ onDataChange }) {
   };
 
   // ===== 构建打印数据 =====
-  const getPrintData = () => {
+  // barcodeList 传值时使用指定条形码（打印时分配），否则生成不消耗序号的预览条形码
+  const getPrintData = (barcodeList) => {
     const result = [];
     const voltage = currentProduct?.voltage || '14.8V';
     const capacityStr = getDisplayCapacity();
     const specText = `${voltage} - ${capacityStr}`;
+    const barcodeCodes = barcodeList || getPreviewBarcodes(copies);
 
     for (let i = 0; i < copies; i++) {
       result.push({
@@ -166,7 +162,7 @@ export default function ProductPanel({ onDataChange }) {
         color: color,
         capacity: specText,
         voltage: voltage,
-        barcode: barcodeText || '2026-0808',
+        barcode: (barcodeCodes[i] ?? barcodeText) || '202608140',
         lang: lang,
       });
     }
@@ -174,12 +170,12 @@ export default function ProductPanel({ onDataChange }) {
   };
 
   // ===== 构建模板 =====
-  const buildTemplate = () => {
+  const buildTemplate = (printDataListOverride) => {
     if (!currentTemplate || !currentTemplate.panels) {
       return { panels: [{ width: 100, height: 60, printElements: [] }] };
     }
 
-    const printDataList = getPrintData();
+    const printDataList = printDataListOverride || getPrintData();
 
     if (printDataList.length === 0) {
       return { panels: [{ width: 100, height: 60, printElements: [] }] };
@@ -200,8 +196,25 @@ export default function ProductPanel({ onDataChange }) {
     return { panels };
   };
 
+  // ===== 打印时分配条形码序号 =====
+  useImperativeHandle(ref, () => ({
+    allocateBarcodes: (count) => {
+      // 未传数量时以面板当前“打印份数”为准
+      const n = Math.max(
+        1,
+        Number.isFinite(Number(count)) ? Math.floor(Number(count)) : Math.max(1, copies)
+      );
+      const { codes, next } = allocateBarcodes(n);
+      setBarcodeText(next);
+      const printDataList = getPrintData(codes);
+      const template = buildTemplate(printDataList);
+      return { printData: printDataList, template };
+    },
+  }));
+
   // ===== 初始化 =====
   useEffect(() => {
+    setBarcodeText(getNextBarcode());
     applyModelDefaults(model);
   }, []);
 
@@ -334,10 +347,13 @@ export default function ProductPanel({ onDataChange }) {
           <input
             type="text"
             value={barcodeText}
-            onChange={(e) => setBarcodeText(e.target.value)}
-            placeholder="请输入条形码字符（如：2026-0808）"
+            readOnly
+            placeholder="自动生成（如：202608140）"
             className="w-full px-2.5 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
           />
+          <span className="text-xs text-gray-400 block mt-1">
+            格式：日期(YYYYMMDD) + 序号，每天从 0 开始，每打印一张自动 +1
+          </span>
         </div>
 
         {/* 摘要 */}
@@ -360,4 +376,6 @@ export default function ProductPanel({ onDataChange }) {
       </div>
     </div>
   );
-}
+});
+
+export default ProductPanel;
