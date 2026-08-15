@@ -2,18 +2,19 @@
 
 import { useState, useRef } from 'react';
 import HiprintButton from '@/components/HiprintButton';
-import { ProductPanel, ChargerPanel } from '@/components/labels';
+import { ProductPanel, ChargerPanel, CustomerPanel } from '@/components/labels';
 
 const LABEL_TYPES = [
   { key: 'product', label: '📦 产品标签' },
   { key: 'charger', label: '🔌 充电器标签' },
-  { key: 'customer', label: '👤 装箱号标签' },
+  { key: 'customer', label: '🧾 客户标签' },
   { key: 'company', label: '🏢 公司标签' },
 ];
 
 export default function HomePage() {
   const [activeType, setActiveType] = useState('product');
   const productPanelRef = useRef(null);
+  const customerPanelRef = useRef(null);
 
   // 当前面板的数据
   const [currentPrintData, setCurrentPrintData] = useState([]);
@@ -36,10 +37,23 @@ export default function HomePage() {
     });
   };
 
-  // 打印前分配条形码序号（由产品面板生成新的条形码数据）
-  const handleBeforePrint = () => {
+  // 打印前分配序号（由子面板生成新的数据）
+  // isRealPrint：true=直接打印时分配序号；false=预览时不消耗序号
+  const handleBeforePrint = (isRealPrint = false) => {
     if (activeType === 'product' && productPanelRef.current?.allocateBarcodes) {
       const bundle = productPanelRef.current.allocateBarcodes();
+      if (bundle?.printData) {
+        setCurrentPrintData(bundle.printData);
+        setCurrentTemplate(bundle.template || { panels: [] });
+        return bundle;
+      }
+    }
+    if (
+      isRealPrint &&
+      activeType === 'customer' &&
+      customerPanelRef.current?.allocateSequences
+    ) {
+      const bundle = customerPanelRef.current.allocateSequences();
       if (bundle?.printData) {
         setCurrentPrintData(bundle.printData);
         setCurrentTemplate(bundle.template || { panels: [] });
@@ -88,11 +102,9 @@ export default function HomePage() {
         {/* 充电器面板 */}
         {isCharger && <ChargerPanel onDataChange={handleDataChange} />}
 
-        {/* 装箱号标签 */}
+        {/* 客户标签 */}
         {isCustomer && (
-          <div className="text-center py-8 text-gray-500">
-            👤 装箱号标签开发中...
-          </div>
+          <CustomerPanel ref={customerPanelRef} onDataChange={handleDataChange} />
         )}
 
         {/* 公司标签 */}

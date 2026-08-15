@@ -1,0 +1,82 @@
+{
+    "panels":
+    [
+        {
+            "index": 0,
+            "name": 1,
+            "height": 30,
+            "width": 60,
+            "paperHeader": 273,
+            "paperFooter": 279,
+            "printElements":
+            [
+                {
+                    "options":
+                    {
+                        "left": 0,
+                        "top": 20,
+                        "height": 18,
+                        "width": 169,
+                        "title": "{{labelText}}",
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "fontFamily": "Microsoft YaHei",
+                        "fontSize": 26,
+                        "fontWeight": "bold",
+                        "textAlign": "center",
+                        "qrCodeLevel": 0,
+                        "right": 184.75,
+                        "bottom": 20.25,
+                        "vCenter": 100.25,
+                        "hCenter": 11.25,
+                        "textContentVerticalAlign": "middle"
+                    },
+                    "printElementType":
+                    {
+                        "title": "文本",
+                        "type": "text"
+                    }
+                },
+                {
+                    "options":
+                    {
+                        "left": 1.5,
+                        "top": 50,
+                        "height": 19.5,
+                        "width": 168,
+                        "title": "{{productCode}}",
+                        "fontWeight": "bold",
+                        "fontFamily": "Microsoft YaHei",
+                        "right": 172.5,
+                        "bottom": 62.25,
+                        "vCenter": 88.5,
+                        "hCenter": 52.5,
+                        "coordinateSync": false,
+                        "widthHeightSync": false,
+                        "qrCodeLevel": 0,
+                        "fontSize": 18,
+                        "textAlign": "center",
+                        "textContentVerticalAlign": "middle"
+                    },
+                    "printElementType":
+                    {
+                        "title": "这是更新后的元素",
+                        "type": "text"
+                    }
+                }
+            ],
+            "paperNumberLeft": 139.5,
+            "paperNumberTop": 63,
+            "paperNumberDisabled": true,
+            "paperNumberContinue": true,
+            "watermarkOptions":
+            {},
+            "panelLayoutOptions":
+            {
+                "layoutType": "column",
+                "layoutRowGap": 0,
+                "layoutColumnGap": 0
+            }
+        }
+    ]
+}

@@ -153,8 +153,6 @@
             "paperNumberTop": 63,
             "paperNumberDisabled": true,
             "paperNumberContinue": true,
-            "watermarkOptions":
-            {},
             "panelLayoutOptions":
             {
                 "layoutType": "column",

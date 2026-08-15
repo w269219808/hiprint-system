@@ -142,7 +142,7 @@ export default function HiprintButton({
 
     // ===== 打印前分配条形码序号 =====
     if (onBeforePrint) {
-      const bundle = await onBeforePrint();
+      const bundle = await onBeforePrint(false);
       if (bundle) {
         dataList = Array.isArray(bundle.printData) ? bundle.printData : [bundle.printData];
         template = bundle.template || templateData;
@@ -235,7 +235,7 @@ export default function HiprintButton({
 
     // ===== 打印前分配条形码序号 =====
     if (onBeforePrint) {
-      const bundle = await onBeforePrint();
+      const bundle = await onBeforePrint(true);
       if (bundle) {
         dataList = Array.isArray(bundle.printData) ? bundle.printData : [bundle.printData];
         template = bundle.template || templateData;
