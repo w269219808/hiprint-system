@@ -17,7 +17,9 @@ const CustomerPanel = forwardRef(function CustomerPanel({ onDataChange }, ref) {
   // 序号仅保存在内存中，不访问 localStorage，避免服务端渲染不一致
   const [customerCode, setCustomerCode] = useState(customersData[0]?.code || 'TYY');
   const [productCode, setProductCode] = useState('LM26004018');
-  const [copies, setCopies] = useState(1);
+  // 打印 N 个连续序号，每个序号打印 M 份，两个都由操作员控制
+  const [serialCount, setSerialCount] = useState(1);
+  const [copiesPerSerial, setCopiesPerSerial] = useState(1);
   // 打印序号：默认 01，打印员可手动设置；仅当前会话有效，不持久化
   const [startSequence, setStartSequence] = useState('01');
 
@@ -36,7 +38,7 @@ const CustomerPanel = forwardRef(function CustomerPanel({ onDataChange }, ref) {
   // 基于状态的下一条序号生成预览序列（不访问 localStorage，避免水合不一致）
   const getPreviewSequencesFromState = () => {
     const start = getStartNumber();
-    return Array.from({ length: Math.max(0, copies) }, (_, i) =>
+    return Array.from({ length: Math.max(0, serialCount) }, (_, i) =>
       String(start + i).padStart(2, '0')
     );
   };
@@ -67,18 +69,21 @@ const CustomerPanel = forwardRef(function CustomerPanel({ onDataChange }, ref) {
 
   // ===== 构建打印数据 =====
   // sequenceList 传值时使用指定序号（打印时分配），否则生成不消耗序号的预览序号
+  // 每个序号按 copiesPerSerial 展开多份：01×2、02×2 ...
   const getPrintData = (sequenceList) => {
     const result = [];
     const sequences = sequenceList || getPreviewSequencesFromState();
 
-    for (let i = 0; i < copies; i++) {
+    for (let i = 0; i < serialCount; i++) {
       const sequence = sequences[i] || '01';
-      result.push({
-        customerCode: customerCode,
-        sequence: sequence,
-        productCode: productCode,
-        labelText: `${customerCode}-${sequence}`,
-      });
+      for (let j = 0; j < copiesPerSerial; j++) {
+        result.push({
+          customerCode: customerCode,
+          sequence: sequence,
+          productCode: productCode,
+          labelText: `${customerCode}-${sequence}`,
+        });
+      }
     }
     return result;
   };
@@ -113,10 +118,12 @@ const CustomerPanel = forwardRef(function CustomerPanel({ onDataChange }, ref) {
   // ===== 打印时分配序号 =====
   useImperativeHandle(ref, () => ({
     allocateSequences: (count) => {
-      // 未传数量时以面板当前“打印份数”为准
+      // 未传数量时以面板当前“序号个数”为准
       const n = Math.max(
         1,
-        Number.isFinite(Number(count)) ? Math.floor(Number(count)) : Math.max(1, copies)
+        Number.isFinite(Number(count))
+          ? Math.floor(Number(count))
+          : Math.max(1, serialCount)
       );
       const start = getStartNumber();
       const codes = Array.from({ length: n }, (_, i) =>
@@ -140,14 +147,15 @@ const CustomerPanel = forwardRef(function CustomerPanel({ onDataChange }, ref) {
     onDataChange?.({
       printData: getPrintData(),
       template: buildTemplate(),
-      copies: copies,
+      serialCount: serialCount,
+      copiesPerSerial: copiesPerSerial,
       paperSize: {
         width: CUSTOMER_TEMPLATE_CONFIG.width,
         height: CUSTOMER_TEMPLATE_CONFIG.height
       },
       templateName: CUSTOMER_TEMPLATE_CONFIG.name,
     });
-  }, [customerCode, productCode, copies, startSequence]);
+  }, [customerCode, productCode, serialCount, copiesPerSerial, startSequence]);
 
   // ===== 渲染 =====
   return (
@@ -182,7 +190,7 @@ const CustomerPanel = forwardRef(function CustomerPanel({ onDataChange }, ref) {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* 产品代码 */}
         <div>
           <label className="block text-sm font-medium text-gray-600">产品代码</label>
@@ -211,18 +219,33 @@ const CustomerPanel = forwardRef(function CustomerPanel({ onDataChange }, ref) {
           </span>
         </div>
 
-        {/* 每份张数 */}
+        {/* 序号个数 */}
         <div>
-          <label className="block text-sm font-medium text-gray-600">每份张数</label>
+          <label className="block text-sm font-medium text-gray-600">序号个数</label>
           <input
             type="number"
             min="1"
-            value={copies}
-            onChange={(e) => setCopies(Math.max(1, Number(e.target.value) || 1))}
+            value={serialCount}
+            onChange={(e) => setSerialCount(Math.max(1, Number(e.target.value) || 1))}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md text-center"
           />
           <span className="text-xs text-gray-400 block mt-1">
-            本次打印的张数，由操作员控制
+            本次打印 N 个连续序号
+          </span>
+        </div>
+
+        {/* 每个序号份数 */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600">每个序号份数</label>
+          <input
+            type="number"
+            min="1"
+            value={copiesPerSerial}
+            onChange={(e) => setCopiesPerSerial(Math.max(1, Number(e.target.value) || 1))}
+            className="mt-1 w-full p-2 border border-gray-300 rounded-md text-center"
+          />
+          <span className="text-xs text-gray-400 block mt-1">
+            每个序号打印 M 份
           </span>
         </div>
       </div>
@@ -230,7 +253,8 @@ const CustomerPanel = forwardRef(function CustomerPanel({ onDataChange }, ref) {
       {/* 摘要 */}
       <div className="mt-3 text-xs text-gray-500 bg-white p-2 rounded border border-gray-200">
         预览数据: 客户: {customerCode} ｜ 序号: {getPreviewSequencesFromState().join('、')} ｜
-        产品代码: {productCode} ｜ 生成 {getPrintData().length} 个标签
+        每个序号 ×{copiesPerSerial} 份 ｜ 产品代码: {productCode} ｜
+        生成 {getPrintData().length} 个标签
       </div>
     </div>
   );
