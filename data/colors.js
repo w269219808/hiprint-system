@@ -10,6 +10,7 @@ export const colorTranslation = {
     '白色': '白色',
     '土豪金': '土豪金',
     '香槟金': '香槟金',
+    '红黑色': '红黑色',
   },
 	'英文': {
 	  '黑色': 'Black',
@@ -20,6 +21,7 @@ export const colorTranslation = {
 	  '蓝色': 'Blue',
 	  '白色': 'White',
 	  '土豪金': 'Rich gold',
-	  '香槟金': 'Champagne Gold',
+	  '香槟金': 'Champagne',
+	  '红黑色': 'Red-Black',
 	}
 };

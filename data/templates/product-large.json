@@ -13,14 +13,14 @@
                 {
                     "options":
                     {
-                        "left": 22.5,
-                        "top": 9,
+                        "left": 0,
+                        "top": 14,
                         "height": 16,
-                        "width": 180,
+                        "width": 225,
                         "title": "{{model}}-{{capacity}}",
                         "coordinateSync": false,
                         "widthHeightSync": false,
-                        "fontSize": 10,
+                        "fontSize": 11,
                         "fontWeight": "bolder",
                         "textContentVerticalAlign": "middle",
                         "qrCodeLevel": 0,
@@ -40,9 +40,9 @@
                     "options":
                     {
                         "left": 23,
-                        "top": 28,
+                        "top": 32,
                         "height": 9,
-                        "width": 180,
+                        "width": 179,
                         "borderWidth": "0.75",
                         "coordinateSync": false,
                         "widthHeightSync": false,
@@ -61,7 +61,7 @@
                     "options":
                     {
                         "left": 27,
-                        "top": 30,
+                        "top": 34,
                         "height": 14,
                         "width": 103,
                         "title": "颜色：{{color}}",
@@ -80,7 +80,7 @@
                     "options":
                     {
                         "left": 136,
-                        "top": 30,
+                        "top": 34,
                         "height": 14,
                         "width": 81,
                         "title": "电量显示版",
@@ -103,9 +103,9 @@
                     "options":
                     {
                         "left": 27,
-                        "top": 48,
-                        "height": 33,
-                        "width": 165,
+                        "top": 52,
+                        "height": 30,
+                        "width": 170,
                         "title": "条形码",
                         "barcodeType": "code128",
                         "testData": "{{barcode}}",
@@ -127,10 +127,10 @@
                 {
                     "options":
                     {
-                        "left": 27,
-                        "top": 84,
+                        "left": 0,
+                        "top": 85,
                         "height": 15,
-                        "width": 140,
+                        "width": 225,
                         "title": "CN {{barcode}}",
                         "coordinateSync": false,
                         "widthHeightSync": false,

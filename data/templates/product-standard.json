@@ -39,10 +39,10 @@
                 {
                     "options":
                     {
-                        "left": 14,
+                        "left": 11.5,
                         "top": 22,
                         "height": 2,
-                        "width": 141,
+                        "width": 146,
                         "borderWidth": "0.75",
                         "coordinateSync": false,
                         "widthHeightSync": false,
@@ -60,10 +60,10 @@
                 {
                     "options":
                     {
-                        "left": 90,
+                        "left": 88,
                         "top": 22.5,
                         "height": 14,
-                        "width": 78,
+                        "width": 70,
                         "title": "电量显示版",
                         "coordinateSync": false,
                         "widthHeightSync": false,
@@ -73,8 +73,8 @@
                         "vCenter": 135,
                         "hCenter": 31,
                         "textContentVerticalAlign": "middle",
-                        "textAlign": "left",
-                        "fontSize": 9
+                        "textAlign": "center",
+                        "fontSize": 8.5
                     },
                     "printElementType":
                     {
@@ -85,17 +85,17 @@
                 {
                     "options":
                     {
-                        "left": 4,
+                        "left": 11.5,
                         "top": 22.5,
                         "height": 14,
-                        "width": 84,
+                        "width": 75,
                         "title": "颜色：{{color}}",
                         "coordinateSync": false,
                         "widthHeightSync": false,
                         "qrCodeLevel": 0,
                         "textContentVerticalAlign": "middle",
                         "textAlign": "center",
-                        "fontSize": 9
+                        "fontSize": 8.5
                     },
                     "printElementType":
                     {
@@ -106,10 +106,10 @@
                 {
                     "options":
                     {
-                        "left": 28.5,
-                        "top": 40,
-                        "height": 25,
-                        "width": 110,
+                        "left": 22,
+                        "top": 38,
+                        "height": 28,
+                        "width": 125,
                         "title": "条形码",
                         "barcodeType": "code128",
                         "testData": "{{barcode}}",
@@ -131,10 +131,10 @@
                 {
                     "options":
                     {
-                        "left": 1.5,
+                        "left": 0,
                         "top": 65,
                         "height": 12,
-                        "width": 140,
+                        "width": 169,
                         "title": "CN {{barcode}}",
                         "coordinateSync": false,
                         "widthHeightSync": false,
