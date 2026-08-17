@@ -3,10 +3,6 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import customersData from '@/data/customers.json';
 import customerTemplate from '@/data/templates/customer-standard.json';
-import {
-  getNextSequence,
-  allocateSequences as allocateCustomerSequences,
-} from '@/lib/customerSequence';
 
 // 客户标签模板配置（目前只有一个 60×30mm 模板）
 const CUSTOMER_TEMPLATE_CONFIG = {
@@ -18,16 +14,28 @@ const CUSTOMER_TEMPLATE_CONFIG = {
 
 const CustomerPanel = forwardRef(function CustomerPanel({ onDataChange }, ref) {
   // ===== 状态 =====
-  // 初始值与 localStorage 无关，避免服务端渲染不一致；
-  // 真实的下一条序号在挂载后通过 useEffect 读取
+  // 序号仅保存在内存中，不访问 localStorage，避免服务端渲染不一致
   const [customerCode, setCustomerCode] = useState(customersData[0]?.code || 'TYY');
   const [productCode, setProductCode] = useState('LM26004018');
   const [copies, setCopies] = useState(1);
-  const [nextSequence, setNextSequence] = useState('01');
+  // 打印序号：默认 01，打印员可手动设置；仅当前会话有效，不持久化
+  const [startSequence, setStartSequence] = useState('01');
+
+  // 解析起始序号：空值/非法时回退到 1
+  const getStartNumber = () => {
+    const n = parseInt(startSequence, 10);
+    return Number.isFinite(n) && n >= 0 ? n : 1;
+  };
+
+  // 序号输入只保留数字，并补足两位（01、02 ... 100）
+  const handleSequenceChange = (value) => {
+    const digits = String(value).replace(/\D/g, '');
+    setStartSequence(digits ? String(parseInt(digits, 10)).padStart(2, '0') : '');
+  };
 
   // 基于状态的下一条序号生成预览序列（不访问 localStorage，避免水合不一致）
   const getPreviewSequencesFromState = () => {
-    const start = parseInt(nextSequence, 10) || 1;
+    const start = getStartNumber();
     return Array.from({ length: Math.max(0, copies) }, (_, i) =>
       String(start + i).padStart(2, '0')
     );
@@ -110,17 +118,21 @@ const CustomerPanel = forwardRef(function CustomerPanel({ onDataChange }, ref) {
         1,
         Number.isFinite(Number(count)) ? Math.floor(Number(count)) : Math.max(1, copies)
       );
-      const { codes, next } = allocateCustomerSequences(customerCode, n);
-      setNextSequence(next);
+      const start = getStartNumber();
+      const codes = Array.from({ length: n }, (_, i) =>
+        String(start + i).padStart(2, '0')
+      );
+      // 打印后在内存中推进下一批起始序号（刷新页面后重新回到 01）
+      setStartSequence(String(start + n).padStart(2, '0'));
       const printDataList = getPrintData(codes);
       const template = buildTemplate(printDataList);
       return { printData: printDataList, template };
     },
   }));
 
-  // ===== 切换客户时刷新下一条序号 =====
+  // ===== 切换客户时序号回到默认 01（不持久化） =====
   useEffect(() => {
-    setNextSequence(getNextSequence(customerCode));
+    setStartSequence('01');
   }, [customerCode]);
 
   // ===== 数据变化时通知父组件 =====
@@ -135,7 +147,7 @@ const CustomerPanel = forwardRef(function CustomerPanel({ onDataChange }, ref) {
       },
       templateName: CUSTOMER_TEMPLATE_CONFIG.name,
     });
-  }, [customerCode, productCode, copies, nextSequence]);
+  }, [customerCode, productCode, copies, startSequence]);
 
   // ===== 渲染 =====
   return (
@@ -186,24 +198,32 @@ const CustomerPanel = forwardRef(function CustomerPanel({ onDataChange }, ref) {
         {/* 打印序号 */}
         <div>
           <label className="block text-sm font-medium text-gray-600">打印序号</label>
-          <div className="mt-1 w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700 text-center font-bold">
-            {nextSequence}
-          </div>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={startSequence}
+            onChange={(e) => handleSequenceChange(e.target.value)}
+            placeholder="01"
+            className="mt-1 w-full p-2 border border-gray-300 rounded-md bg-white text-center font-bold focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+          />
           <span className="text-xs text-gray-400 block mt-1">
-            每打印一次自动 +1
+            默认 01，打印员可手动设置；刷新后重新从 01 开始
           </span>
         </div>
 
-        {/* 份数 */}
+        {/* 每份张数 */}
         <div>
-          <label className="block text-sm font-medium text-gray-600">打印份数</label>
+          <label className="block text-sm font-medium text-gray-600">每份张数</label>
           <input
             type="number"
             min="1"
             value={copies}
-            onChange={(e) => setCopies(Number(e.target.value))}
+            onChange={(e) => setCopies(Math.max(1, Number(e.target.value) || 1))}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md text-center"
           />
+          <span className="text-xs text-gray-400 block mt-1">
+            本次打印的张数，由操作员控制
+          </span>
         </div>
       </div>
 
