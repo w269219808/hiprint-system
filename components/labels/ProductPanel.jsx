@@ -123,6 +123,8 @@ const ProductPanel = forwardRef(function ProductPanel({ onDataChange }, ref) {
   const renderElement = (element, data, index) => {
     const el = JSON.parse(JSON.stringify(element));
     const isEnglish = data?.lang === '英文';
+    const isDL = data?.model?.startsWith('DL'); // 判断是否 DL 系列
+
 
     if (el.printElementType?.type === 'text' && el.options?.title) {
       let title = el.options.title;
@@ -135,8 +137,11 @@ const ProductPanel = forwardRef(function ProductPanel({ onDataChange }, ref) {
           : colorValue;
         title = isEnglish ? `Color: ${translatedColor}` : `颜色：${translatedColor}`;
       }
-      if (title === '电量显示版' || title.includes('电量显示版')) {
-        title = isEnglish ? 'Power Display' : '电量显示版';
+
+
+      if (title.includes('CN')) {
+        const barcodeValue = data?.barcode || '';
+        title = isEnglish ? `EN ${barcodeValue}` : `CN ${barcodeValue}`;
       }
       el.options.title = title;
     }
@@ -156,6 +161,28 @@ const ProductPanel = forwardRef(function ProductPanel({ onDataChange }, ref) {
     const specText = `${voltage} - ${capacityStr}`;
     const barcodeCodes = barcodeList || getPreviewBarcodes(copies);
 
+    // 获取原始 power 值
+    let rawPower = '电量显示版';
+    if (currentProduct) {
+      if (currentProduct.isMultiCapacity) {
+        const matchedCap = currentProduct.capacities?.find(
+          (c) => c.label === selectedCapacity
+        );
+        rawPower = matchedCap?.power || '电量显示版';
+      } else {
+        rawPower = currentProduct.power || '电量显示版';
+      }
+    }
+
+    // ✅ 根据语言直接转换成最终显示的文字
+    const isEnglish = lang === '英文';
+    let displayPower = rawPower;
+    if (rawPower === '常规版') {
+      displayPower = isEnglish ? 'Standard' : '常规版';
+    } else {
+      displayPower = isEnglish ? 'Power Display' : '电量显示版';
+    }
+
     for (let i = 0; i < copies; i++) {
       result.push({
         model: model,
@@ -164,6 +191,7 @@ const ProductPanel = forwardRef(function ProductPanel({ onDataChange }, ref) {
         voltage: voltage,
         barcode: (barcodeCodes[i] ?? barcodeText) || '202608140',
         lang: lang,
+        power: displayPower,
       });
     }
     return result;

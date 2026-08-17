@@ -64,7 +64,7 @@
                         "top": 22.5,
                         "height": 14,
                         "width": 70,
-                        "title": "电量显示版",
+                        "title": "{{power}}",
                         "coordinateSync": false,
                         "widthHeightSync": false,
                         "qrCodeLevel": 0,
