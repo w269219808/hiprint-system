@@ -21,7 +21,7 @@ export default function HiprintButton({
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // ===== 获取模板纸张尺寸 =====
+  //获取模板纸张的尺寸
   const getPaperSize = (template) => {
     const panel = template?.panels?.[0] || {};
     return {
@@ -49,28 +49,28 @@ export default function HiprintButton({
 
           targetHiprint.init({
             host: TRANSIT_HOST,
-            token: 'hiprint',
+            token: 'hiprint',  // 👈 关键！必须加
             providers: [new defaultProvider()],
           });
           console.log('✅ Hiprint 已连接到中转服务:', TRANSIT_HOST);
-
-          // ===== WebSocket 连接和事件监听（只绑定一次） =====
+          // ===== 新增：手动连接 WebSocket =====
           const socket = targetHiprint.hiwebSocket?.socket;
           if (socket) {
-            // 如果未连接，手动连接
+            // 如果已断开，手动连接
             if (!socket.connected) {
               console.log('🔄 WebSocket 未连接，手动连接...');
               socket.connect();
             }
 
-            // 监听连接成功
+            // 监听连接
             socket.on('connect', () => {
               console.log('✅ WebSocket 已连接');
               setIsLoading(true);
+              // 请求打印机列表
               socket.emit('getClients');
             });
 
-            // 监听打印机列表（主要）
+            // 监听打印机列表
             socket.on('printerList', (list) => {
               console.log('🖨️ 收到 printerList:', list);
               if (list && list.length > 0) {
@@ -83,7 +83,7 @@ export default function HiprintButton({
               }
             });
 
-            // 监听 clients（备选）
+            // 监听 clients
             socket.on('clients', (data) => {
               console.log('📡 收到 clients:', data);
               const allPrinters = [];
@@ -102,6 +102,75 @@ export default function HiprintButton({
               }
             });
 
+            // 连接错误
+            socket.on('connect_error', (err) => {
+              console.error('❌ WebSocket 连接错误:', err);
+              setIsLoading(false);
+            });
+
+            // 如果已经连接，直接请求
+            if (socket.connected) {
+              console.log('✅ Socket 已连接，直接请求');
+              socket.emit('getClients');
+            }
+          } else {
+            console.warn('⚠️ 未找到 WebSocket 实例');
+          }
+          // ===== 关键：通过 WebSocket 监听打印机列表 =====
+          // const socket = targetHiprint.hiwebSocket?.socket;
+          if (socket) {
+            // 连接成功
+            socket.on('connect', () => {
+              console.log('✅ WebSocket 已连接');
+              setIsLoading(true);
+              // 主动请求打印机列表
+              socket.emit('getClients');
+            });
+
+            // 监听 printerList 事件
+            socket.on('printerList', (list) => {
+              console.log('🖨️ 收到打印机列表 (printerList):', list);
+              if (list && list.length > 0) {
+                setPrinterList(list);
+                setIsClientReady(true);
+                setIsLoading(false);
+                const defaultPrinter = list.find((p) => p.isDefault);
+                if (defaultPrinter) {
+                  setSelectedPrinter(defaultPrinter.name);
+                } else if (printerName) {
+                  setSelectedPrinter(printerName);
+                } else if (list.length > 0) {
+                  setSelectedPrinter(list[0].name);
+                }
+              }
+            });
+
+            // 监听 clients 事件（备选）
+            socket.on('clients', (clientsData) => {
+              console.log('📡 收到 clients 事件:', clientsData);
+              const allPrinters = [];
+              for (const clientId in clientsData) {
+                const client = clientsData[clientId];
+                if (client.printerList && client.printerList.length > 0) {
+                  allPrinters.push(...client.printerList);
+                }
+              }
+              if (allPrinters.length > 0) {
+                setPrinterList(allPrinters);
+                setIsClientReady(true);
+                setIsLoading(false);
+                const defaultPrinter = allPrinters.find((p) => p.isDefault);
+                if (defaultPrinter) {
+                  setSelectedPrinter(defaultPrinter.name);
+                } else if (printerName) {
+                  setSelectedPrinter(printerName);
+                } else if (allPrinters.length > 0) {
+                  setSelectedPrinter(allPrinters[0].name);
+                }
+                console.log('🖨️ 通过 clients 获取到打印机:', allPrinters);
+              }
+            });
+
             // 连接断开
             socket.on('disconnect', () => {
               console.warn('⚠️ WebSocket 断开连接');
@@ -115,9 +184,9 @@ export default function HiprintButton({
               setIsLoading(false);
             });
 
-            // 如果已经连接，直接请求
+            // 如果 socket 已经连接了，直接请求
             if (socket.connected) {
-              console.log('✅ Socket 已连接，直接请求');
+              console.log('✅ Socket 已连接，主动请求打印机列表');
               socket.emit('getClients');
             }
           } else {
@@ -134,8 +203,13 @@ export default function HiprintButton({
                   setIsClientReady(true);
                   setIsLoading(false);
                   const defaultPrinter = list.find((p) => p.isDefault);
-                  if (defaultPrinter) setSelectedPrinter(defaultPrinter.name);
-                  else if (list.length > 0) setSelectedPrinter(list[0].name);
+                  if (defaultPrinter) {
+                    setSelectedPrinter(defaultPrinter.name);
+                  } else if (printerName) {
+                    setSelectedPrinter(printerName);
+                  } else if (list.length > 0) {
+                    setSelectedPrinter(list[0].name);
+                  }
                   clearInterval(pollInterval);
                 } else {
                   retryCount++;
@@ -166,18 +240,16 @@ export default function HiprintButton({
     return () => {
       isMounted = false;
     };
-  }, []); // 移除 printerName 依赖，避免重复初始化
+  }, [printerName]);
 
   // ===== 2. 刷新打印机列表 =====
   const refreshPrinterList = () => {
-    if (!hiprintObj) {
-      alert('⚠️ Hiprint 未初始化');
-      return;
-    }
+    if (!hiprintObj) return;
     const socket = hiprintObj.hiwebSocket?.socket;
     if (socket && socket.connected) {
       setIsLoading(true);
       socket.emit('getClients');
+      // 5秒后取消加载状态
       setTimeout(() => setIsLoading(false), 5000);
     } else {
       alert('⚠️ WebSocket 未连接，请检查中转服务');
@@ -288,8 +360,9 @@ export default function HiprintButton({
 
   // ===== 5. 生成 TSPL 指令 =====
   const generateTSPL = (dataList, template) => {
-    // 统一使用 getPaperSize
-    const { width: paperWidth, height: paperHeight } = getPaperSize(template);
+    const panel = template?.panels?.[0] || {};
+    const paperWidth = panel.width || 60;
+    const paperHeight = panel.height || 30;
     const dotPerMm = 11.8;
     const labelWidth = Math.round(paperWidth * dotPerMm);
     const labelHeight = Math.round(paperHeight * dotPerMm);
@@ -304,7 +377,7 @@ export default function HiprintButton({
     tspl += 'SET TEAR ON\r\n';
     tspl += 'CLS\r\n';
 
-    const elements = template?.panels?.[0]?.printElements || [];
+    const elements = panel.printElements || [];
 
     if (elements.length === 0) {
       dataList.forEach((data, index) => {
@@ -435,7 +508,7 @@ export default function HiprintButton({
     }
   };
 
-  // ===== 7. 静默打印（优先 print2，降级 TSPL） =====
+  // ===== 7. 静默打印 =====
   const handleSilentPrint = async () => {
     if (!hiprintObj || !templateData || !printData) {
       return alert('打印组件未就绪或缺失模板/数据！');
@@ -444,7 +517,7 @@ export default function HiprintButton({
     if (!isClientReady || printerList.length === 0) {
       return alert(
         '⚠️ 未检测到打印机！\n\n请确保：\n' +
-        '1. Windows 系统已安装打印机\n' +
+        '1. Windows 系统已安装打印机（包括 Microsoft Print to PDF）\n' +
         '2. electron-hiprint 客户端已启动并连接中转服务\n' +
         '3. 点击"刷新"按钮获取打印机列表'
       );
@@ -466,7 +539,49 @@ export default function HiprintButton({
       }
     }
 
-    try {
+    // try {
+    //   const tsplData = generateTSPL(dataList, template);
+    //   console.log('🖨️ 发送 TSPL:', { printer, dataCount: dataList.length, tsplLength: tsplData.length });
+    //   await sendTSPL(printer, tsplData);
+    //   alert(`✅ 已发送 ${dataList.length} 张标签到 "${printer}"`);
+    // } catch (error) {
+    //   console.error('❌ 打印失败:', error);
+    //   // 回退到 print2
+    //   try {
+    //     console.log('🔄 尝试回退到 print2...');
+    //     const customTemplate = new hiprintObj.PrintTemplate({ template });
+    //     const hasMultiplePanels = template?.panels && template.panels.length > 1;
+    //     const finalDataList = hasMultiplePanels ? [{}] : dataList;
+    //     const { width: paperWidth, height: paperHeight } = getPaperSize(template);
+
+    //     const selectedPrinterObj = printerList.find(p => p.name === (selectedPrinter || printerName));
+    //     const clientId = selectedPrinterObj?.server?.clientId;  // 👈 注意是 server.clientId
+
+    //     if (!clientId) {
+    //       alert('⚠️ 无法获取客户端 ID，请刷新打印机列表重试');
+    //       return;
+    //     }
+
+    //     customTemplate.print2(finalDataList, {
+    //       client: clientId,  // 👈 使用 server.clientId
+    //       printer: printer,
+    //       silent: true,
+    //       copies: finalDataList.length,
+    //       paperSize: {
+    //         width: paperWidth * 1000,
+    //         height: paperHeight * 1000,
+    //       },
+    //     });
+
+
+    //     alert(`✅ 已发送 ${dataList.length} 张标签 (回退模式)`);
+    //   } catch (fallbackError) {
+    //     console.error('❌ 回退打印也失败:', fallbackError);
+    //     alert('打印失败：' + error.message);
+    //   }
+    // }
+
+      try {
       // ===== 第一招：print2（通用，兼容性好） =====
       console.log('🖨️ 尝试 print2 打印...');
       const customTemplate = new hiprintObj.PrintTemplate({ template });
@@ -502,6 +617,7 @@ export default function HiprintButton({
         alert('打印失败：' + error.message);
       }
     }
+
   };
 
   // ===== 8. 主入口 =====
