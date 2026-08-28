@@ -6,6 +6,25 @@ import React, { useState, useEffect, useRef } from 'react';
 const CONTAINER_ID = 'hiprint-printTemplate';
 const SETTING_CONTAINER_ID = 'PrintElementOptionSetting';
 const PROVIDER_CONTAINER_ID = 'left-provider-container';
+const HIDDEN_HOLDER_ID = 'hiprint-designer-hidden-holder';
+
+// 左侧元素库图标映射（按 hiprint 元素的 tid）
+const ELEMENT_ICONS = {
+  'defaultModule.text': '📝',
+  'defaultModule.customText': '✏️',
+  'defaultModule.longText': '📄',
+  'defaultModule.image': '🖼️',
+  'defaultModule.table': '📊',
+  'defaultModule.emptyTable': '🔲',
+  'defaultModule.html': '🌐',
+  'defaultModule.hline': '➖',
+  'defaultModule.vline': '┃',
+  'defaultModule.rect': '▭',
+  'defaultModule.oval': '◯',
+  'defaultModule.barcode': '▮▮▮',
+  'defaultModule.qrcode': '🔳',
+};
+const DEFAULT_ELEMENT_ICON = '🔹';
 
 export default function HiprintDesigner({ templateData, onSave }) {
   const [isReady, setIsReady] = useState(false);
@@ -72,6 +91,122 @@ export default function HiprintDesigner({ templateData, onSave }) {
     }
   };
 
+  // 4. 获取当前设计的模板 JSON
+  const getDesignJson = () => {
+    if (!hiprintTemplateRef.current) return null;
+    return hiprintTemplateRef.current.getJson();
+  };
+
+  // 5. 用当前设计生成打印用 HTML
+  const getPreviewHtml = (templateJson) => {
+    if (!window.hiprint) return Promise.resolve(null);
+    const holder = document.getElementById(HIDDEN_HOLDER_ID);
+    if (!holder) return Promise.resolve(null);
+    holder.innerHTML = '';
+
+    const customTemplate = new window.hiprint.PrintTemplate({ template: templateJson });
+    customTemplate.design(`#${HIDDEN_HOLDER_ID}`);
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const $htmlElements = customTemplate.getHtml([{}]);
+        let htmlContent = '';
+        $htmlElements.each((index, element) => {
+          htmlContent += element.outerHTML;
+        });
+        resolve(htmlContent);
+      }, 100);
+    });
+  };
+
+  // 6. 在新窗口打开预览（autoPrint=true 时自动调起打印）
+  const openPrintWindow = (htmlContent, autoPrint) => {
+    const win = window.open('', '_blank');
+    if (!win) {
+      alert('打开预览失败，请允许浏览器弹出窗口！');
+      return false;
+    }
+
+    win.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>${autoPrint ? '标签打印' : '标签预览'}</title>
+          <link rel="stylesheet" type="text/css" href="/print-lock.css" />
+          <style>
+            body {
+              background-color: #525659;
+              margin: 0;
+              padding: 20px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            }
+            .hiprint-printPaper {
+              background: #ffffff !important;
+              margin-bottom: 20px !important;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            }
+            @media print {
+              body {
+                background: none !important;
+                padding: 0 !important;
+                display: block !important;
+              }
+              .hiprint-printPaper {
+                box-shadow: none !important;
+                margin: 0 !important;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          ${htmlContent}
+          <script>
+            window.onload = function() {
+              setTimeout(() => {
+                ${autoPrint ? 'window.print();' : ''}
+              }, 300);
+            };
+          <\/script>
+        </body>
+      </html>
+    `);
+    win.document.close();
+    return true;
+  };
+
+  // 7. 预览（只展示，不自动打印）
+  const handlePreview = async () => {
+    const templateJson = getDesignJson();
+    if (!templateJson) return alert('设计器未就绪，请稍后再试！');
+
+    try {
+      const htmlContent = await getPreviewHtml(templateJson);
+      if (!htmlContent) return alert('生成预览失败！');
+      openPrintWindow(htmlContent, false);
+    } catch (err) {
+      console.error('❌ 生成预览失败:', err);
+      alert('生成预览失败，请查看浏览器开发者工具控制台。');
+    }
+  };
+
+  // 8. 打印（打开预览后自动调起浏览器打印）
+  const handlePrint = async () => {
+    const templateJson = getDesignJson();
+    if (!templateJson) return alert('设计器未就绪，请稍后再试！');
+
+    try {
+      const htmlContent = await getPreviewHtml(templateJson);
+      if (!htmlContent) return alert('生成打印内容失败！');
+      openPrintWindow(htmlContent, true);
+    } catch (err) {
+      console.error('❌ 生成打印内容失败:', err);
+      alert('生成打印内容失败，请查看浏览器开发者工具控制台。');
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
 
@@ -123,6 +258,24 @@ export default function HiprintDesigner({ templateData, onSave }) {
           providerContainer.innerHTML = '';
           try {
             hiprint.PrintElementTypeManager.build(`#${PROVIDER_CONTAINER_ID}`, 'defaultModule');
+
+            // 为每个元素条目注入图标
+            providerContainer.querySelectorAll('.ep-draggable-item').forEach((item) => {
+              const tid = item.getAttribute('tid') || '';
+              const label = (item.textContent || '').trim();
+
+              item.textContent = '';
+
+              const iconSpan = document.createElement('span');
+              iconSpan.className = 'ep-item-icon';
+              iconSpan.textContent = ELEMENT_ICONS[tid] || DEFAULT_ELEMENT_ICON;
+              item.appendChild(iconSpan);
+
+              const labelSpan = document.createElement('span');
+              labelSpan.className = 'ep-item-label';
+              labelSpan.textContent = label;
+              item.appendChild(labelSpan);
+            });
           } catch (err) {
             console.error('Build left provider failed:', err);
           }
@@ -166,6 +319,17 @@ export default function HiprintDesigner({ templateData, onSave }) {
 
   return (
     <div className="w-full flex flex-col gap-4 p-4 border rounded-lg bg-gray-100 min-h-[700px]">
+      {/* 隐藏的 HTML 渲染容器（用于生成预览/打印内容） */}
+      <div
+        id={HIDDEN_HOLDER_ID}
+        style={{
+          position: 'absolute',
+          left: '-9999px',
+          top: '-9999px',
+          visibility: 'hidden',
+        }}
+      />
+
       {/* 1. 顶部工具栏：尺寸控制 + 导出 */}
       <div className="flex justify-between items-center bg-white p-3 rounded shadow-sm flex-wrap gap-2">
         <div className="flex items-center gap-4">
@@ -221,13 +385,29 @@ export default function HiprintDesigner({ templateData, onSave }) {
           </div>
         </div>
 
-        <button
-          onClick={handleExportJson}
-          disabled={!isReady}
-          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors"
-        >
-          💾 导出 JSON
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handlePreview}
+            disabled={!isReady}
+            className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded text-sm font-medium transition-colors"
+          >
+            👁️ 预览
+          </button>
+          <button
+            onClick={handlePrint}
+            disabled={!isReady}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition-colors"
+          >
+            🖨️ 打印
+          </button>
+          <button
+            onClick={handleExportJson}
+            disabled={!isReady}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors"
+          >
+            💾 导出 JSON
+          </button>
+        </div>
       </div>
 
       {/* 2. 图片对应的【模板导入导出】条 */}
