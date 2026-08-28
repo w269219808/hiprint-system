@@ -21,7 +21,7 @@ const ELEMENT_ICONS = {
   'defaultModule.vline': '┃',
   'defaultModule.rect': '▭',
   'defaultModule.oval': '◯',
-  'defaultModule.barcode': '▮▮▮',
+  'defaultModule.barcode': '▮▮',
   'defaultModule.qrcode': '🔳',
 };
 const DEFAULT_ELEMENT_ICON = '🔹';
