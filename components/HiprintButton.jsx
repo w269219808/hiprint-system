@@ -12,6 +12,7 @@ export default function HiprintButton({
   silent = false,
   printerName = '',
   onBeforePrint,
+  labelType = '标签',
 }) {
   const [hiprintObj, setHiprintObj] = useState(null);
   const [isReady, setIsReady] = useState(false);
@@ -28,6 +29,50 @@ export default function HiprintButton({
       width: panel.width || 60,
       height: panel.height || 30,
     };
+  };
+
+  // ===== 构建日志摘要（存 content_summary） =====
+  const buildLogSummary = (dataList) => {
+    const list = Array.isArray(dataList) ? dataList : dataList ? [dataList] : [];
+    const first = list[0] || {};
+    const barcodes = [
+      ...new Set(
+        list
+          .map((d) => d.barcode || d.labelText || d.sequence)
+          .filter(Boolean)
+      ),
+    ];
+    return {
+      copies: list.length,
+      model: first.model,
+      color: first.color,
+      capacity: first.capacity,
+      lang: first.lang,
+      customerCode: first.customerCode,
+      productCode: first.productCode,
+      barcodes: barcodes.length > 6 ? [barcodes[0], barcodes[barcodes.length - 1]] : barcodes,
+    };
+  };
+
+  // ===== 上报打印日志（失败不影响打印主流程） =====
+  const sendPrintLog = async ({ dataList, status = 'SUCCESS', mode = '打印', errorMessage }) => {
+    try {
+      const summary = buildLogSummary(dataList);
+      if (errorMessage) summary.error = errorMessage;
+      await fetch('/api/print-log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          printType: `${labelType} ${mode}`,
+          contentSummary: summary,
+          printerName: selectedPrinter || printerName || '',
+          copies: summary.copies,
+          status,
+        }),
+      });
+    } catch (error) {
+      console.error('写入打印日志失败:', error);
+    }
   };
 
   // ===== 1. 初始化 Hiprint =====
@@ -280,8 +325,11 @@ export default function HiprintButton({
       `);
 
       win.document.close();
+      // 记录预览操作（实际打印在浏览器打印窗口里完成）
+      sendPrintLog({ dataList, mode: '预览' });
     } catch (error) {
       console.error('❌ 生成预览失败:', error);
+      sendPrintLog({ dataList, status: 'FAILED', mode: '预览', errorMessage: error.message });
       alert('生成打印预览失败，请查看浏览器开发者工具控制台。');
     }
   };
@@ -488,6 +536,7 @@ export default function HiprintButton({
         },
       });
 
+      sendPrintLog({ dataList, mode: '打印' });
       alert(`✅ 已发送 ${dataList.length} 张标签`);
 
     } catch (error) {
@@ -496,9 +545,16 @@ export default function HiprintButton({
       try {
         const tsplData = generateTSPL(dataList, template);
         await sendTSPL(printer, tsplData);
+        sendPrintLog({ dataList, mode: '打印（TSPL 降级）' });
         alert(`✅ 已发送 ${dataList.length} 张标签 (TSPL 降级)`);
       } catch (tsplError) {
         console.error('❌ TSPL 也失败:', tsplError);
+        sendPrintLog({
+          dataList,
+          status: 'FAILED',
+          mode: '打印',
+          errorMessage: `${error.message} / ${tsplError.message}`,
+        });
         alert('打印失败：' + error.message);
       }
     }

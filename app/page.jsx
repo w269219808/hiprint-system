@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Link from 'next/link';
 import HiprintButton from '@/components/HiprintButton';
 import { ProductPanel, ChargerPanel, CustomerPanel } from '@/components/labels';
 
@@ -10,6 +11,14 @@ const LABEL_TYPES = [
   { key: 'customer', label: '🧾 客户标签' },
   { key: 'company', label: '🏢 公司标签' },
 ];
+
+// 写入打印日志时使用的标签类型名称（不带 emoji）
+const LABEL_TYPE_NAMES = {
+  product: '产品标签',
+  charger: '充电器标签',
+  customer: '客户标签',
+  company: '公司标签',
+};
 
 export default function HomePage() {
   const [activeType, setActiveType] = useState('product');
@@ -72,6 +81,16 @@ export default function HomePage() {
         minWidth: '300px'
       }}
     >
+      <div className="flex items-center justify-between mb-4">
+        <span />
+        <Link
+          href="/print-logs"
+          className="text-sm text-blue-600 hover:text-blue-800 underline"
+        >
+          📋 查看打印日志
+        </Link>
+      </div>
+
       <h1 className="text-2xl font-bold mb-6 text-center">
         🏷️ 蓝铭电子标签打印控制台
       </h1>
@@ -137,6 +156,7 @@ export default function HomePage() {
             printData={currentPrintData}
             buttonText="🔊 预览打印"
             onBeforePrint={handleBeforePrint}
+            labelType={LABEL_TYPE_NAMES[activeType] || '标签'}
           />
           <HiprintButton
             templateData={currentTemplate}
@@ -144,6 +164,7 @@ export default function HomePage() {
             buttonText="🖨️ 直接打印"
             silent={true}
             onBeforePrint={handleBeforePrint}
+            labelType={LABEL_TYPE_NAMES[activeType] || '标签'}
           />
         </div>
       </div>
