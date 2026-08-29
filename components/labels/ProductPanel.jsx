@@ -293,7 +293,7 @@ const ProductPanel = forwardRef(function ProductPanel({ onDataChange }, ref) {
 
       {/* 产品选择 */}
       <div>
-        <h3 className="font-semibold text-gray-700 border-b pb-2 mb-3">
+        <h3 className="font-semibold text-gray-700 border-b border-gray-300 pb-2 mb-3">
           🎯 产品选择
         </h3>
 
