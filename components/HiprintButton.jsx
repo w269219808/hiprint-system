@@ -584,7 +584,7 @@ export default function HiprintButton({
       {silent ? (
         <div className="flex items-center gap-3 flex-wrap">
           <label className="text-xs text-gray-600 font-medium whitespace-nowrap">
-            🖨️ 打印机:
+            打印机:
           </label>
           <select
             value={selectedPrinter}
