@@ -134,7 +134,7 @@ export default function HomePage() {
         )}
 
         {/* 打印控制 */}
-        <div className="flex items-center gap-4 text-sm border-t pt-4 flex-wrap">
+        <div className="flex items-center gap-4 text-sm border-t border-gray-200 pt-4 flex-wrap">
           <span className="font-semibold text-gray-700">🖨️ 打印</span>
           <span className="text-gray-400 text-xs">
             生成 {currentPrintData.length} 个标签
@@ -149,7 +149,7 @@ export default function HomePage() {
         </div>
 
         {/* 打印按钮 */}
-        <div className="flex items-center gap-3 border-t pt-4">
+        <div className="flex items-center gap-3 border-t border-gray-200 pt-4">
           <span className="font-semibold text-gray-700 text-sm">🖨️</span>
           {/* <HiprintButton
             templateData={currentTemplate}
@@ -170,7 +170,7 @@ export default function HomePage() {
       </div>
 
       {/* 底部信息 */}
-      <div className="mt-4 text-xs text-gray-400 border-t pt-3">
+      <div className="mt-4 text-xs text-gray-400 pt-3">
         当前标签类型: <strong>{activeType}</strong> ｜
         模板: <strong>{paperInfo.name}</strong> ｜
         纸张: <strong>{paperInfo.width}×{paperInfo.height}mm</strong> ｜
