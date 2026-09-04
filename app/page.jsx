@@ -81,15 +81,7 @@ export default function HomePage() {
         minWidth: '300px'
       }}
     >
-      <div className="flex items-center justify-between mb-4">
-        <span />
-        <Link
-          href="/print-logs"
-          className="text-sm text-blue-600 hover:text-blue-800 underline"
-        >
-          📋 查看打印日志
-        </Link>
-      </div>
+
 
       <h1 className="text-2xl font-bold mb-6 text-center">
         🏷️ 蓝铭电子标签打印控制台
@@ -176,6 +168,21 @@ export default function HomePage() {
         纸张: <strong>{paperInfo.width}×{paperInfo.height}mm</strong> ｜
         打印张数: <strong>{currentPrintData.length}</strong>
       </div>
+      <div className="flex items-center justify-between my-4">
+        <Link
+          href="/desgin"
+          className="text-sm text-gray-600 hover:text-blue-800 underline"
+        >
+          🖋️ 设计器
+        </Link>
+        <Link
+          href="/print-logs"
+          className="text-sm text-gray-600 hover:text-blue-800 underline"
+        >
+          📋 查看打印日志
+        </Link>
+      </div>
+
     </main>
   );
 }
