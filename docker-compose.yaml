@@ -5,7 +5,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - DATABASE_URL=${DATABASE_URL}  # 从 .env 文件读取
     container_name: nextjs-app
     ports:
       - "8080:3000"
     restart: unless-stopped
+    environment:
+      - DATABASE_URL=${DATABASE_URL}  # 从 .env 文件读取
