@@ -13,11 +13,12 @@
     "postgres": "^3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "vue-plugin-hiprint": "^0.0.60"
+    "vue-plugin-hiprint": "^0.0.60",
+    "@tailwindcss/postcss": "^4",
+    "tailwindcss": "^4"
+
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "drizzle-kit": "^0.31.10",
-    "tailwindcss": "^4"
+    "drizzle-kit": "^0.31.10"
   }
 }
