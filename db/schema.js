@@ -8,3 +8,13 @@ export const printLogs = pgTable('print_logs', {
   status: varchar('status', { length: 20 }).default('SUCCESS'),// 状态
   createdAt: timestamp('created_at').defaultNow(),          // 打印时间
 });
+
+// 在现有的 schema.js 里加上这个
+export const printerConfigs = pgTable('printer_configs', {
+  id: serial('id').primaryKey(),
+  paperSize: varchar('paper_size', { length: 20 }).notNull().unique(),
+  printerName: varchar('printer_name', { length: 100 }).notNull(),
+  clientId: varchar('client_id', { length: 50 }),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()),
+});
