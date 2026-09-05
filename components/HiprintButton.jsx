@@ -526,7 +526,7 @@ export default function HiprintButton({
       const customTemplate = new hiprintObj.PrintTemplate({ template });
       const hasMultiplePanels = template?.panels && template.panels.length > 1;
       const finalDataList = hasMultiplePanels ? [{}] : dataList;
-      const { width: paperWidth, height: paperHeight } = getPaperSize(template);
+      // const { width: paperWidth, height: paperHeight } = getPaperSize(template);
 
       const selectedPrinterObj = printerList.find(p => p.name === (selectedPrinter || printerName));
       // 中转服务 printerList 里每台打印机自带顶层 clientId，不是 server.clientId
@@ -540,12 +540,16 @@ export default function HiprintButton({
         printer: printer,
         silent: true,
         copies: finalDataList.length,
-        pageSize: {
-          width: paperWidth * 1000,
-          height: paperHeight * 1000,
-        },
+        // pageSize: {
+        //   width: paperWidth * 1000,
+        //   height: paperHeight * 1000,
+        // },
+        // paperSize: {
+        //   width: paperWidth * 1000,
+        //   height: paperHeight * 1000,
+        // },
       });
-      //将你代码中的 paperSize 改为 pageSize 即可：
+  
 
       sendPrintLog({ dataList, mode: '打印' });
       alert(`✅ 已发送 ${dataList.length} 张标签`);
