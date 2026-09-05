@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import PrinterConfigModal from './PrinterConfigModal';
 
 // ===== 中转服务地址 =====
 const TRANSIT_HOST = 'http://192.168.110.107:17521';
+
 
 export default function HiprintButton({
   templateData,
@@ -21,6 +23,84 @@ export default function HiprintButton({
   const [isClientReady, setIsClientReady] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // 2. 添加状态
+  const [showConfigModal, setShowConfigModal] = useState(false);
+  const [printerConfigs, setPrinterConfigs] = useState({});
+
+  // 在 useState 后面加上这个
+  const [isConfigLoaded, setIsConfigLoaded] = useState(false);
+
+  // 3. 加载配置 - 改成这样
+  useEffect(() => {
+    const loadConfigs = async () => {
+      try {
+        const res = await fetch('/api/printer-configs');
+        const data = await res.json();
+        const configMap = {};
+        data.forEach(item => {
+          const key = item.paperSize || item.paper_size;
+          const value = item.printerName || item.printer_name;
+          if (key && value) {
+            configMap[key] = value;
+          }
+        });
+        setPrinterConfigs(configMap);
+        setIsConfigLoaded(true);  // ✅ 标记加载完成
+        console.log('📋 加载打印机配置:', configMap);
+      } catch (error) {
+        console.warn('加载打印机配置失败:', error);
+        setIsConfigLoaded(true);
+      }
+    };
+    
+    loadConfigs();
+  }, []);
+
+
+  // ✅ 自动匹配：配置加载完成后执行
+  useEffect(() => {
+    if (!isConfigLoaded) return;
+    if (!templateData) return;
+    if (printerList.length === 0) return;
+    
+    const panel = templateData?.panels?.[0] || {};
+    const sizeKey = `${panel.width}x${panel.height}`;
+    const matchedPrinter = printerConfigs[sizeKey];
+    
+    console.log('🔍 自动匹配检查:', { sizeKey, matchedPrinter });
+    
+    if (matchedPrinter) {
+      const exists = printerList.some(p => p.name === matchedPrinter);
+      if (exists && selectedPrinter !== matchedPrinter) {
+        setSelectedPrinter(matchedPrinter);
+        console.log(`✅ 自动匹配: ${sizeKey} → ${matchedPrinter}`);
+      }
+    }
+  }, [isConfigLoaded, templateData, printerList, printerConfigs, selectedPrinter]);
+
+
+
+  // 4. 保存配置
+  const handleSaveConfigs = async (configs) => {
+    try {
+    const payload = Object.entries(configs).map(([paperSize, printerName]) => ({
+      paperSize,    // ← 改成驼峰
+      printerName,  // ← 改成驼峰
+      }));
+      
+      await fetch('/api/printer-configs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      
+      setPrinterConfigs(configs);
+      alert('✅ 配置保存成功！');
+    } catch (error) {
+      alert('❌ 保存失败：' + error.message);
+    }
+  };
 
   // ===== 获取模板纸张尺寸 =====
   const getPaperSize = (template) => {
@@ -117,7 +197,7 @@ export default function HiprintButton({
 
             // 监听打印机列表（主要）
             socket.on('printerList', (list) => {
-              console.log('🖨️ 收到 printerList:', list);
+              // console.log('🖨️ 收到 printerList:', list);
               if (list && list.length > 0) {
                 setPrinterList(list);
                 setIsClientReady(true);
@@ -130,7 +210,7 @@ export default function HiprintButton({
 
             // 监听 clients（备选）
             socket.on('clients', (data) => {
-              console.log('📡 收到 clients:', data);
+              // console.log('📡 收到 clients:', data);
               const allPrinters = [];
               for (const id in data) {
                 if (data[id].printerList) {
@@ -637,6 +717,14 @@ export default function HiprintButton({
           >
             {!isReady ? '⏳ 加载中...' : isLoading ? '⏳ 获取中...' : !isClientReady ? '⚠️ 未连接' : buttonText}
           </button>
+          {/* 配置按钮 - 放在同一行 */}
+          <button
+            onClick={() => setShowConfigModal(true)}
+            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            title="打印机配置"
+          >
+            ⚙️
+          </button>
         </div>
       ) : (
         <button
@@ -650,7 +738,15 @@ export default function HiprintButton({
         >
           {!isReady ? '⏳ 加载中...' : buttonText}
         </button>
+        
       )}
+      <PrinterConfigModal
+        isOpen={showConfigModal}
+        onClose={() => setShowConfigModal(false)}
+        printerList={printerList}
+        existingConfigs={printerConfigs}
+        onSave={handleSaveConfigs}
+      />
 
       {showConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -688,6 +784,7 @@ export default function HiprintButton({
             >
               👁️ 先预览再打印
             </button>
+            
           </div>
         </div>
       )}
