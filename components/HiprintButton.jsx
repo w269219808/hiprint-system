@@ -134,7 +134,13 @@ export default function HiprintButton({
               const allPrinters = [];
               for (const id in data) {
                 if (data[id].printerList) {
-                  allPrinters.push(...data[id].printerList);
+                  allPrinters.push(
+                    ...data[id].printerList.map((printer) => ({
+                      ...printer,
+                      // clients 的外层 key 才是 clientId，展开时补到每台打印机上
+                      clientId: printer.clientId || id,
+                    }))
+                  );
                 }
               }
               if (allPrinters.length > 0) {
@@ -523,18 +529,23 @@ export default function HiprintButton({
       const { width: paperWidth, height: paperHeight } = getPaperSize(template);
 
       const selectedPrinterObj = printerList.find(p => p.name === (selectedPrinter || printerName));
-      const clientId = selectedPrinterObj?.server?.clientId;
+      // 中转服务 printerList 里每台打印机自带顶层 clientId，不是 server.clientId
+      const clientId = selectedPrinterObj?.clientId || selectedPrinterObj?.server?.clientId;
+
+
+      console.log('clientId', clientId);  // 这个clientID,怎么是未定义
 
       customTemplate.print2(finalDataList, {
         ...(clientId && { client: clientId }),
         printer: printer,
         silent: true,
         copies: finalDataList.length,
-        paperSize: {
+        pageSize: {
           width: paperWidth * 1000,
           height: paperHeight * 1000,
         },
       });
+      //将你代码中的 paperSize 改为 pageSize 即可：
 
       sendPrintLog({ dataList, mode: '打印' });
       alert(`✅ 已发送 ${dataList.length} 张标签`);
