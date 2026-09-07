@@ -1,0 +1,63 @@
+{
+  "id": "1788757889084",
+  "name": "hello",
+  "data": {
+    "panels": [
+      {
+        "index": 0,
+        "name": 1,
+        "height": 30,
+        "width": 60,
+        "paperHeader": 49.5,
+        "paperFooter": 78.78787878787878,
+        "printElements": [
+          {
+            "options": {
+              "left": 30,
+              "top": 27,
+              "height": 23,
+              "width": 112.5,
+              "title": "hello world",
+              "coordinateSync": false,
+              "widthHeightSync": false,
+              "fontFamily": "Microsoft YaHei",
+              "fontSize": 13.5,
+              "fontWeight": "bolder",
+              "textContentVerticalAlign": "middle",
+              "qrCodeLevel": 0,
+              "right": 142.5,
+              "bottom": 49.25,
+              "vCenter": 86.25,
+              "hCenter": 37.75
+            },
+            "printElementType": {
+              "title": "这是更新后的元素",
+              "type": "text"
+            }
+          }
+        ],
+        "paperNumberLeft": 140,
+        "paperNumberTop": 63,
+        "paperNumberDisabled": true,
+        "paperNumberContinue": true,
+        "watermarkOptions": {
+          "content": "",
+          "rotate": 25,
+          "timestamp": false,
+          "format": "YYYY-MM-DD HH:mm",
+          "fillStyle": "rgba(184, 184, 184, 0.3)",
+          "fontSize": "14px",
+          "width": 200,
+          "height": 200
+        },
+        "panelLayoutOptions": {
+          "layoutType": "column",
+          "layoutRowGap": 0,
+          "layoutColumnGap": 0
+        }
+      }
+    ]
+  },
+  "createdAt": "2026-09-07T05:11:29.084Z",
+  "updatedAt": "2026-09-07T06:40:50.448Z"
+}

@@ -1,0 +1,64 @@
+{
+  "id": "1788763835403",
+  "name": "lm",
+  "data": {
+    "panels": [
+      {
+        "index": 0,
+        "name": 1,
+        "height": 30,
+        "width": 60,
+        "paperHeader": 0,
+        "paperFooter": 78.78787878787878,
+        "printElements": [
+          {
+            "options": {
+              "left": 0,
+              "top": 30,
+              "height": 23,
+              "width": 166.5,
+              "title": "蓝铭电子科技",
+              "coordinateSync": false,
+              "widthHeightSync": false,
+              "fontFamily": "Microsoft YaHei",
+              "fontSize": 15.75,
+              "fontWeight": "bolder",
+              "textContentVerticalAlign": "middle",
+              "qrCodeLevel": 0,
+              "right": 111,
+              "bottom": 53,
+              "vCenter": 54.75,
+              "hCenter": 41.5,
+              "textAlign": "center"
+            },
+            "printElementType": {
+              "title": "这是更新后的元素",
+              "type": "text"
+            }
+          }
+        ],
+        "paperNumberLeft": 140,
+        "paperNumberTop": 63,
+        "paperNumberDisabled": true,
+        "paperNumberContinue": true,
+        "watermarkOptions": {
+          "content": "",
+          "rotate": 25,
+          "timestamp": false,
+          "format": "YYYY-MM-DD HH:mm",
+          "fillStyle": "rgba(184, 184, 184, 0.3)",
+          "fontSize": "14px",
+          "width": 200,
+          "height": 200
+        },
+        "panelLayoutOptions": {
+          "layoutType": "column",
+          "layoutRowGap": 0,
+          "layoutColumnGap": 0
+        }
+      }
+    ]
+  },
+  "createdAt": "2026-09-07T06:50:35.403Z",
+  "updatedAt": "2026-09-07T06:50:35.403Z"
+}

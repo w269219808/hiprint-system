@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 
 // 常量配置
 const CONTAINER_ID = 'hiprint-printTemplate';
@@ -26,7 +26,7 @@ const ELEMENT_ICONS = {
 };
 const DEFAULT_ELEMENT_ICON = '🔹';
 
-export default function HiprintDesigner({ templateData, onSave }) {
+const HiprintDesigner = forwardRef(function HiprintDesigner({ templateData, onSave }, ref) {
   const [isReady, setIsReady] = useState(false);
   const hiprintTemplateRef = useRef(null);
 
@@ -96,6 +96,11 @@ export default function HiprintDesigner({ templateData, onSave }) {
     if (!hiprintTemplateRef.current) return null;
     return hiprintTemplateRef.current.getJson();
   };
+
+  // 暴露给父组件：保存时必须取画布中的最新 JSON
+  useImperativeHandle(ref, () => ({
+    getDesignJson,
+  }), []);
 
   // 5. 用当前设计生成打印用 HTML
   const getPreviewHtml = (templateJson) => {
@@ -317,6 +322,47 @@ export default function HiprintDesigner({ templateData, onSave }) {
     };
   }, []);
 
+  // ========== 监听 templateData 变化，重新加载设计器 ==========
+  // useEffect(() => {
+  //   // 如果设计器还没初始化好，或者没有数据，就不处理
+  //   if (!isReady || !templateData || !templateData.panels) return;
+
+  //   // 获取当前设计器的 JSON
+  //   const currentJson = hiprintTemplateRef.current?.getJson();
+  //   if (!currentJson) return;
+
+  //   // 比较当前数据和传入的数据是否相同
+  //   const currentStr = JSON.stringify(currentJson);
+  //   const newStr = JSON.stringify(templateData);
+    
+  //   if (currentStr !== newStr) {
+  //     console.log('📌 检测到模板数据变化，重新加载设计器');
+      
+  //     // 清空设计器
+  //     const container = document.getElementById(CONTAINER_ID);
+  //     if (container) container.innerHTML = '';
+  //     const settingContainer = document.getElementById(SETTING_CONTAINER_ID);
+  //     if (settingContainer) settingContainer.innerHTML = '';
+
+  //     // 重新加载
+  //     if (typeof window !== 'undefined' && window.hiprint) {
+  //       try {
+  //         const template = new window.hiprint.PrintTemplate({
+  //           template: templateData,
+  //           settingContainer: `#${SETTING_CONTAINER_ID}`,
+  //           history: true,
+  //         });
+  //         template.design(`#${CONTAINER_ID}`);
+  //         hiprintTemplateRef.current = template;
+  //         setJsonText(JSON.stringify(templateData, null, 2));
+  //         console.log('✅ 设计器重新加载成功');
+  //       } catch (err) {
+  //         console.error('❌ 重新加载失败:', err);
+  //       }
+  //     }
+  //   }
+  // }, [templateData, isReady]);  // 👈 监听这两个变量变化
+
   return (
     <div className="w-full flex flex-col gap-4 p-4 border rounded-lg bg-gray-100 min-h-[700px]">
       {/* 隐藏的 HTML 渲染容器（用于生成预览/打印内容） */}
@@ -452,4 +498,6 @@ export default function HiprintDesigner({ templateData, onSave }) {
       </div>
     </div>
   );
-}
+});
+
+export default HiprintDesigner;
