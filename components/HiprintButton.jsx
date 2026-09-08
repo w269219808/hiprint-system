@@ -632,7 +632,7 @@ export default function HiprintButton({
   
 
       sendPrintLog({ dataList, mode: '打印' });
-      alert(`✅ 已发送 ${dataList.length} 张标签`);
+      // alert(`✅ 已发送 ${dataList.length} 张标签`);
 
     } catch (error) {
       // ===== 第二招：print2 失败，降级到 TSPL =====
@@ -641,7 +641,7 @@ export default function HiprintButton({
         const tsplData = generateTSPL(dataList, template);
         await sendTSPL(printer, tsplData);
         sendPrintLog({ dataList, mode: '打印（TSPL 降级）' });
-        alert(`✅ 已发送 ${dataList.length} 张标签 (TSPL 降级)`);
+        // alert(`✅ 已发送 ${dataList.length} 张标签 (TSPL 降级)`);
       } catch (tsplError) {
         console.error('❌ TSPL 也失败:', tsplError);
         sendPrintLog({

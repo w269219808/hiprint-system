@@ -263,7 +263,7 @@ const ProductPanel = forwardRef(function ProductPanel({ onDataChange }, ref) {
 
   // ===== 渲染 =====
   return (
-    <div>
+    <div className="w-full">
       {/* 模板选择区 */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
@@ -298,72 +298,60 @@ const ProductPanel = forwardRef(function ProductPanel({ onDataChange }, ref) {
           🎯 产品选择
         </h3>
 
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
           {/* 型号 */}
-          {/* <div>
-            <label className="block text-sm font-medium text-gray-600">型号</label>
-            <select
-              value={model}
-              onChange={(e) => handleModelChange(e.target.value)}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md bg-white"
-            >
-              {modelList.map((m) => (
-                <option key={m} value={m}>{m}</option>
-              ))}
-            </select>
-          </div> */}
-<div>
-  <label className="block text-sm font-medium text-gray-600 mb-1">型号</label>
-  {/* 下拉按钮 */}
-  <div className="relative">
-    <button
-      onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
-      className="w-full p-2 border border-gray-300 rounded-md bg-white text-left flex justify-between items-center hover:border-blue-400 transition-colors"
-    >
-      <span>{model}</span>
-      <svg className={`w-4 h-4 transition-transform ${isModelDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-      </svg>
-    </button>
-    
-    {/* 下拉面板 */}
-    {isModelDropdownOpen && (
-      <div className="absolute z-10 mt-1 w-[360px] bg-white border border-gray-300 rounded-md shadow-lg p-3 max-h-[500px] overflow-y-auto">
-        {(() => {
-          const groups = {};
-          modelList.forEach(m => {
-            const prefix = m.match(/^[A-Z]+/)?.[0] || '其他';
-            if (!groups[prefix]) groups[prefix] = [];
-            groups[prefix].push(m);
-          });
-          return Object.entries(groups).map(([series, models]) => (
-            <div key={series} className="mb-2 last:mb-0">
-              <div className="text-xs font-medium text-gray-400 mb-1.5">{series} 系列</div>
-              <div className="flex flex-wrap gap-1.5">
-                {models.map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => {
-                      handleModelChange(m);
-                      setIsModelDropdownOpen(false);
-                    }}
-                    className={`px-3 py-1 text-sm rounded-md transition-all ${
-                      model === m
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {m}
-                  </button>
-                ))}
-              </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">型号</label>
+            {/* 下拉按钮 */}
+            <div className="relative w-full">
+              <button
+                onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
+                className="w-full p-2 border border-gray-300 rounded-md bg-white text-left flex justify-between items-center hover:border-blue-400 transition-colors"
+              >
+                <span>{model}</span>
+                <svg className={`w-4 h-4 transition-transform ${isModelDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {/* 下拉面板 */}
+              {isModelDropdownOpen && (
+                <div className="absolute z-10 mt-1 w-[200%] bg-white border border-gray-300 rounded-md shadow-lg p-3 max-h-[500px] overflow-y-auto">
+                  {(() => {
+                    const groups = {};
+                    modelList.forEach(m => {
+                      const prefix = m.match(/^[A-Z]+/)?.[0] || '其他';
+                      if (!groups[prefix]) groups[prefix] = [];
+                      groups[prefix].push(m);
+                    });
+                    return Object.entries(groups).map(([series, models]) => (
+                      <div key={series} className="mb-2 last:mb-0">
+                        <div className="text-xs font-medium text-gray-400 mb-1.5">{series} 系列</div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {models.map((m) => (
+                            <button
+                              key={m}
+                              onClick={() => {
+                                handleModelChange(m);
+                                setIsModelDropdownOpen(false);
+                              }}
+                              className={`px-3 py-1 text-sm rounded-md transition-all ${
+                                model === m
+                                  ? 'bg-blue-600 text-white shadow-sm'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              {m}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ));
+                  })()}
+                </div>
+              )}
             </div>
-          ));
-        })()}
-      </div>
-    )}
-  </div>
-</div>
+          </div>
 
           {/* 语言 */}
           <div>

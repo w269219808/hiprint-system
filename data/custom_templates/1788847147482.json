@@ -1,34 +1,35 @@
 {
-  "id": "1788757889084",
-  "name": "hello",
+  "id": "1788847147482",
+  "name": "4123",
   "data": {
     "panels": [
       {
         "index": 0,
         "name": 1,
-        "height": 30,
-        "width": 60,
-        "paperHeader": 49.5,
-        "paperFooter": 78.78787878787878,
+        "height": 40,
+        "width": 80,
+        "paperHeader": 0,
+        "paperFooter": 105.05050505050504,
         "printElements": [
           {
             "options": {
-              "left": 30,
-              "top": 27,
-              "height": 23,
-              "width": 112.5,
-              "title": "hello world",
+              "left": 0,
+              "top": 30,
+              "height": 45,
+              "width": 225,
+              "title": "我是一只鱼",
               "coordinateSync": false,
               "widthHeightSync": false,
               "fontFamily": "Microsoft YaHei",
-              "fontSize": 13.5,
+              "fontSize": 15.75,
               "fontWeight": "bolder",
               "textContentVerticalAlign": "middle",
               "qrCodeLevel": 0,
-              "right": 142.5,
-              "bottom": 49.25,
-              "vCenter": 86.25,
-              "hCenter": 37.75
+              "right": 111,
+              "bottom": 53,
+              "vCenter": 54.75,
+              "hCenter": 41.5,
+              "textAlign": "center"
             },
             "printElementType": {
               "title": "这是更新后的元素",
@@ -58,6 +59,6 @@
       }
     ]
   },
-  "createdAt": "2026-09-07T05:11:29.084Z",
-  "updatedAt": "2026-09-07T06:40:50.448Z"
+  "createdAt": "2026-09-08T05:59:07.482Z",
+  "updatedAt": "2026-09-08T06:45:51.814Z"
 }

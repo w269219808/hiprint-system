@@ -51,6 +51,14 @@ export async function POST(request) {
   if (!name || !data) {
     return NextResponse.json({ success: false, error: '名称和数据不能为空' });
   }
+
+  if (typeof name !== 'string' || name.trim().length === 0 || name.trim().length > 100) {
+    return NextResponse.json({ success: false, error: '名称长度需在1-100之间' }, { status: 400 });
+  }
+
+  if (typeof data !== 'object' || data === null) {
+    return NextResponse.json({ success: false, error: 'data 必须是有效的模板数据' }, { status: 400 });
+  }
   
   await ensureDir();
 
@@ -98,14 +106,31 @@ export async function POST(request) {
   return NextResponse.json({ success: true, data: template });
 }
 
-// ===== DELETE：删除模板 =====
+
 export async function DELETE(request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
   if (!id) {
     return NextResponse.json({ success: false, error: '缺少ID' });
   }
-  
-  await fs.unlink(path.join(TEMPLATES_DIR, `${id}.json`));
+
+  // ✅ 新增：只允许纯数字 ID，防止路径穿越
+  if (!/^\d+$/.test(String(id))) {
+    return NextResponse.json({ success: false, error: '模板ID不合法' }, { status: 400 });
+  }
+
+  const filePath = path.join(TEMPLATES_DIR, `${id}.json`);
+
+  // ✅ 新增：二次校验，确保解析后的路径仍在模板目录内
+  const resolved = path.resolve(filePath);
+  if (!resolved.startsWith(TEMPLATES_DIR)) {
+    return NextResponse.json({ success: false, error: '非法路径' }, { status: 403 });
+  }
+
+  try {
+    await fs.unlink(filePath);
+  } catch {
+    return NextResponse.json({ success: false, error: '模板不存在' }, { status: 404 });
+  }
   return NextResponse.json({ success: true });
 }

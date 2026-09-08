@@ -73,16 +73,7 @@ export default function HomePage() {
   };
 
   return (
-    <main
-      className="p-8 max-w-6xl mx-auto font-sans"
-      style={{
-        width: '100%',
-        maxWidth: '850px',
-        minWidth: '300px'
-      }}
-    >
-
-
+    <main className="p-4 sm:p-6 md:p-8 w-full max-w-[900px] min-w-0 mx-auto font-sans">
       <h1 className="text-2xl font-bold mb-6 text-center">
         🏷️ 蓝铭电子标签打印控制台
       </h1>
@@ -105,8 +96,7 @@ export default function HomePage() {
       </div>
 
       {/* 核心内容区 */}
-      <div className="border border-gray-200 p-6 rounded-xl bg-gray-50 shadow-sm space-y-5">
-
+      <div className="border border-gray-200 p-6 rounded-xl bg-gray-50 shadow-sm space-y-5 w-full">      
         {/* 产品面板 */}
         {isProduct && <ProductPanel ref={productPanelRef} onDataChange={handleDataChange} />}
 

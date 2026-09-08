@@ -14,22 +14,31 @@ export async function GET() {
   }
 }
 
-// POST - 保存/更新配置
+
 export async function POST(request) {
   try {
     const configs = await request.json();
 
+    // ✅ 新增：必须是数组
+    if (!Array.isArray(configs)) {
+      return NextResponse.json({ error: '参数必须是数组' }, { status: 400 });
+    }
+
+    // ✅ 新增：限制最大数量
+    if (configs.length > 200) {
+      return NextResponse.json({ error: '单次最多保存200条配置' }, { status: 400 });
+    }
+
     await db.delete(printerConfigs);
 
     if (configs.length > 0) {
-      // ✅ 兼容两种字段名：驼峰 或 下划线
       const insertData = configs
         .filter(c => (c.paperSize || c.paper_size) && (c.printerName || c.printer_name))
         .map(c => ({
-          paperSize: c.paperSize || c.paper_size,
-          printerName: c.printerName || c.printer_name,
+          paperSize: String(c.paperSize || c.paper_size).trim().slice(0, 50),   // ✅ 限制长度
+          printerName: String(c.printerName || c.printer_name).trim().slice(0, 100), // ✅ 限制长度
         }));
-      
+
       if (insertData.length > 0) {
         await db.insert(printerConfigs).values(insertData);
       }

@@ -159,7 +159,7 @@ export default function ChargerPanel({ onDataChange }) {
 
   // ===== 渲染 =====
   return (
-    <div>
+    <div className="w-full min-w-0">
       {/* 模板选择 */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
@@ -192,7 +192,8 @@ export default function ChargerPanel({ onDataChange }) {
         🔌 充电器选择
       </h3>
 
-      <div className="grid grid-cols-3 gap-4">
+      
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* 型号 */}
         <div>
           <label className="block text-sm font-medium text-gray-600">型号</label>

@@ -19,6 +19,17 @@ export async function POST(request) {
   try {
     const body = await request.json();
     const { printType, contentSummary, status, printerName, copies } = body;
+        // ✅ 新增：字段校验
+    if (printType && (typeof printType !== 'string' || printType.length > 50)) {
+      return NextResponse.json({ success: false, error: 'printType 不合法' }, { status: 400 });
+    }
+    const validStatuses = ['SUCCESS', 'FAILED', 'PENDING', 'CANCELLED'];
+    if (status && !validStatuses.includes(String(status).toUpperCase())) {
+      return NextResponse.json({ success: false, error: 'status 值不合法' }, { status: 400 });
+    }
+    if (copies != null && (!Number.isInteger(copies) || copies < 1 || copies > 9999)) {
+      return NextResponse.json({ success: false, error: 'copies 需在1-9999之间' }, { status: 400 });
+    }
 
     // contentSummary 支持对象，自动转成 JSON 字符串
     let summary = contentSummary;
@@ -68,7 +79,8 @@ export async function GET(request) {
     );
     const printType = searchParams.get('printType') || '';
     const status = searchParams.get('status') || '';
-    const keyword = searchParams.get('keyword') || '';
+    // const keyword = searchParams.get('keyword') || '';
+    const keyword = (searchParams.get('keyword') || '').slice(0, 100); 
     const date = searchParams.get('date') || '';
 
     // 组装筛选条件
