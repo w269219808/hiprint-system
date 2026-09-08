@@ -159,11 +159,26 @@ export default function HomePage() {
         打印张数: <strong>{currentPrintData.length}</strong>
       </div>
       <div className="flex items-center justify-between my-4">
-        <Link
+        {/* <Link
           href="/desgin"
           className="text-sm text-gray-600 hover:text-blue-800 underline"
         >
           🖋️ 设计器
+        </Link> */}
+        {/* PC 上显示：指向 /desgin */}
+        <Link
+          href="/desgin"
+          className="hidden sm:inline text-sm text-gray-600 hover:text-blue-800 underline"
+        >
+          🖋️ 设计器
+        </Link>
+
+        {/* 手机上显示：指向 /templates */}
+        <Link
+          href="/templates"
+          className="sm:hidden text-sm text-gray-600 hover:text-blue-800 underline"
+        >
+          📋 模板
         </Link>
         <Link
           href="/print-logs"
