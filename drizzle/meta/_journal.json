@@ -8,6 +8,13 @@
       "when": 1788590811828,
       "tag": "0000_short_marauders",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757491200000,
+      "tag": "0001_barcode_counters",
+      "breakpoints": true
     }
   ]
 }

@@ -47,10 +47,9 @@ export default function HomePage() {
   };
 
   // 打印前分配序号（由子面板生成新的数据）
-  // isRealPrint：true=直接打印时分配序号；false=预览时不消耗序号
-  const handleBeforePrint = (isRealPrint = false) => {
+  const handleBeforePrint = async (isRealPrint = false) => {
     if (isRealPrint && activeType === 'product' && productPanelRef.current?.allocateBarcodes) {
-      const bundle = productPanelRef.current.allocateBarcodes();
+      const bundle = await productPanelRef.current.allocateBarcodes();
       if (bundle?.printData) {
         setCurrentPrintData(bundle.printData);
         setCurrentTemplate(bundle.template || { panels: [] });
@@ -62,7 +61,7 @@ export default function HomePage() {
       activeType === 'customer' &&
       customerPanelRef.current?.allocateSequences
     ) {
-      const bundle = customerPanelRef.current.allocateSequences();
+      const bundle = await customerPanelRef.current.allocateSequences();
       if (bundle?.printData) {
         setCurrentPrintData(bundle.printData);
         setCurrentTemplate(bundle.template || { panels: [] });

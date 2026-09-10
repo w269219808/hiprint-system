@@ -602,32 +602,60 @@ export default function HiprintButton({
 
     try {
       // ===== 第一招：print2（通用，兼容性好） =====
+      // console.log('🖨️ 尝试 print2 打印...');
+      // const customTemplate = new hiprintObj.PrintTemplate({ template });
+      // const hasMultiplePanels = template?.panels && template.panels.length > 1;
+      // const finalDataList = hasMultiplePanels ? [{}] : dataList;
+      // // const { width: paperWidth, height: paperHeight } = getPaperSize(template);
+
+      // const selectedPrinterObj = printerList.find(p => p.name === (selectedPrinter || printerName));
+      // // 中转服务 printerList 里每台打印机自带顶层 clientId，不是 server.clientId
+      // const clientId = selectedPrinterObj?.clientId || selectedPrinterObj?.server?.clientId;
+
+
+      // console.log('clientId', clientId);  // 这个clientID,怎么是未定义
+
+      // customTemplate.print2(finalDataList, {
+      //   ...(clientId && { client: clientId }),
+      //   printer: printer,
+      //   silent: true,
+      //   copies: finalDataList.length,
+      // });
+      
+      // ===== 第一招：print2（通用，兼容性好） =====
       console.log('🖨️ 尝试 print2 打印...');
+
+      // 1. 获取动态计算的纸张尺寸 (单位: mm)
+      const { width: paperWidth, height: paperHeight } = getPaperSize(template);
+
+      // 2. 实例化模板
       const customTemplate = new hiprintObj.PrintTemplate({ template });
+
+      // 3. 【修正】直接使用毫米(mm)单位，不要 * 1000
+      if (customTemplate.panels && customTemplate.panels.length > 0) {
+        const panel = customTemplate.panels[0];
+        panel.width = paperWidth;         // 单位：mm (例如 60)
+        panel.height = paperHeight;       // 单位：mm (例如 30)
+        panel.paperWidth = paperWidth;   // 单位：mm
+        panel.paperHeight = paperHeight; // 单位：mm
+        panel.paperType = 'other';       // 声明为自定义尺寸
+      }
+
       const hasMultiplePanels = template?.panels && template.panels.length > 1;
       const finalDataList = hasMultiplePanels ? [{}] : dataList;
-      // const { width: paperWidth, height: paperHeight } = getPaperSize(template);
 
+      // 4. 【核心修正】正确提取 clientId (避免 undefined)
       const selectedPrinterObj = printerList.find(p => p.name === (selectedPrinter || printerName));
-      // 中转服务 printerList 里每台打印机自带顶层 clientId，不是 server.clientId
-      const clientId = selectedPrinterObj?.clientId || selectedPrinterObj?.server?.clientId;
+      const clientId = selectedPrinterObj?.clientId || selectedPrinterObj?.server?.clientId || printerList[0]?.clientId;
 
+      console.log('clientId:', clientId);
 
-      console.log('clientId', clientId);  // 这个clientID,怎么是未定义
-
+      // 5. 执行打印 (这里只需要传静默打印和打印机名字，无需传 pageSize)
       customTemplate.print2(finalDataList, {
         ...(clientId && { client: clientId }),
         printer: printer,
         silent: true,
         copies: finalDataList.length,
-        // pageSize: {
-        //   width: paperWidth * 1000,
-        //   height: paperHeight * 1000,
-        // },
-        // paperSize: {
-        //   width: paperWidth * 1000,
-        //   height: paperHeight * 1000,
-        // },
       });
   
 

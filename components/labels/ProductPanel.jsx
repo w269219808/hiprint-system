@@ -8,7 +8,7 @@ import largeTemplate from '@/data/templates/product-large.json';
 import smallTemplate from '@/data/templates/product-small.json';
 import wideTemplate from '@/data/templates/product-wide.json';
 import { colorTranslation } from '@/data/colors';
-import { getNextBarcode, getPreviewBarcodes, allocateBarcodes } from '@/lib/barcodeCounter';
+import { getNextBarcode, getPreviewBarcodes, allocateBarcodes, getPrintedCount, getTodayPrefix } from '@/lib/barcodeCounter';
 
 // 模板映射
 const TEMPLATE_MAP = {
@@ -36,6 +36,8 @@ const ProductPanel = forwardRef(function ProductPanel({ onDataChange }, ref) {
   const [lang, setLang] = useState('中文');
   const [copies, setCopies] = useState(1);
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
+  // 服务端条形码计数缓存（预览用，不消耗序号）
+  const [serverCount, setServerCount] = useState(0);
 
   // ===== 计算属性 =====
   const modelList = Object.keys(productsData);
@@ -154,13 +156,16 @@ const ProductPanel = forwardRef(function ProductPanel({ onDataChange }, ref) {
   };
 
   // ===== 构建打印数据 =====
-  // barcodeList 传值时使用指定条形码（打印时分配），否则生成不消耗序号的预览条形码
+  // barcodeList 传值时使用指定条形码（打印时分配），否则用缓存的 serverCount 生成预览条形码（不消耗序号）
   const getPrintData = (barcodeList) => {
     const result = [];
     const voltage = currentProduct?.voltage || '14.8V';
     const capacityStr = getDisplayCapacity();
     const specText = `${voltage} - ${capacityStr}`;
-    const barcodeCodes = barcodeList || getPreviewBarcodes(copies);
+    // 预览时用缓存的 serverCount 生成条形码（同步，不消耗序号）
+    const prefix = getTodayPrefix();
+    const previewCodes = Array.from({ length: copies }, (_, i) => `${prefix}${serverCount + i}`);
+    const barcodeCodes = barcodeList || previewCodes;
 
     // 获取原始 power 值
     let rawPower = '电量显示版';
@@ -225,26 +230,35 @@ const ProductPanel = forwardRef(function ProductPanel({ onDataChange }, ref) {
     return { panels };
   };
 
-  // ===== 打印时分配条形码序号 =====
+  // ===== 打印时分配条形码序号（异步调用服务端） =====
   useImperativeHandle(ref, () => ({
-    allocateBarcodes: (count) => {
-      // 未传数量时以面板当前“打印份数”为准
+    allocateBarcodes: async (count) => {
+      // 未传数量时以面板当前"打印份数"为准
       const n = Math.max(
         1,
         Number.isFinite(Number(count)) ? Math.floor(Number(count)) : Math.max(1, copies)
       );
-      const { codes, next } = allocateBarcodes(n);
+      const result = await allocateBarcodes(n);
+      const { codes, next } = result;
       setBarcodeText(next);
+      // 同步更新本地缓存，让下次预览也用最新值
+      setServerCount(parseInt(next.slice(8), 10) || 0);
       const printDataList = getPrintData(codes);
       const template = buildTemplate(printDataList);
       return { printData: printDataList, template };
     },
   }));
 
-  // ===== 初始化 =====
+  // ===== 初始化：从服务端加载当前序号 =====
   useEffect(() => {
-    setBarcodeText(getNextBarcode());
-    applyModelDefaults(model);
+    const init = async () => {
+      const prefix = getTodayPrefix();
+      const count = await getPrintedCount(prefix);
+      setServerCount(count);
+      setBarcodeText(`${prefix}${count}`);
+      applyModelDefaults(model);
+    };
+    init();
   }, []);
 
   // ===== 数据变化时通知父组件 =====

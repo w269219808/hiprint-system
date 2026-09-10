@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, text, timestamp, integer } from 'drizzle-orm/pg-core';
 
 export const printLogs = pgTable('print_logs', {
   id: serial('id').primaryKey(),
@@ -16,5 +16,13 @@ export const printerConfigs = pgTable('printer_configs', {
   printerName: varchar('printer_name', { length: 100 }).notNull(),
   clientId: varchar('client_id', { length: 50 }),
   createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()),
+});
+
+// 条形码序号计数器（按日期存储，所有电脑共享）
+export const barcodeCounters = pgTable('barcode_counters', {
+  id: serial('id').primaryKey(),
+  datePrefix: varchar('date_prefix', { length: 8 }).notNull().unique(), // YYYYMMDD
+  count: integer('count').notNull().default(0),
   updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()),
 });

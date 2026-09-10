@@ -20,7 +20,7 @@
   "GN10F": { "voltage": "22.2V", "capacity": "10Ah-222Wh", "colors": ["银色", "黑色", "香槟金"], "power":"电量显示版" },
   "DN20A": { "voltage": "14.8V", "capacity": "20Ah-296Wh", "colors": ["黑色", "红黑色"], "power":"电量显示版" },
   "GP20A": { "voltage": "14.8V", "capacity": "20Ah-296Wh", "colors": ["黑色", "红黑色"], "power":"电量显示版" },
-  "dx15": {
+  "DX15": {
     "voltage": "14.8V",
     "isMultiCapacity": true,
     "capacities": [
