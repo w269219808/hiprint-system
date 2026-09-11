@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef } from 'react';
 import Link from 'next/link';
@@ -178,6 +178,12 @@ export default function HomePage() {
           className="sm:hidden text-sm text-gray-600 hover:text-blue-800 underline"
         >
           📋 模板
+        </Link>
+        <Link
+          href="/dashboard"
+          className="text-sm text-gray-600 hover:text-blue-800 underline"
+        >
+          📊 可视化数据
         </Link>
         <Link
           href="/print-logs"
