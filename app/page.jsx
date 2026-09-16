@@ -132,13 +132,6 @@ export default function HomePage() {
         {/* 打印按钮 */}
         <div className="flex items-center gap-3 border-t border-gray-200 pt-4">
           <span className="font-semibold text-gray-700 text-sm">🖨️</span>
-          {/* <HiprintButton
-            templateData={currentTemplate}
-            printData={currentPrintData}
-            buttonText="🔊 预览打印"
-            onBeforePrint={handleBeforePrint}
-            labelType={LABEL_TYPE_NAMES[activeType] || '标签'}
-          /> */}
           <HiprintButton
             templateData={currentTemplate}
             printData={currentPrintData}
