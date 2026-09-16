@@ -12,7 +12,7 @@ export async function GET(request) {
     const endDate = searchParams.get('endDate');
 
     const conditions = [
-      ilike(printLogs.printType, '产品标签 打印'),
+      ilike(printLogs.printType, '产品标签 打印(已下发)'),
     ];
 
     if (startDate) {
