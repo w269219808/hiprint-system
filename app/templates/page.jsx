@@ -15,6 +15,7 @@ export default function TemplatesPage() {
 const [printingTemplate, setPrintingTemplate] = useState(null); // 当前要打印的模板
 const [printerList, setPrinterList] = useState([]);
 const [selectedPrinter, setSelectedPrinter] = useState('');
+const [selectedClientId, setSelectedClientId] = useState('');
 const [copies, setCopies] = useState(1);
 const [hiprintObj, setHiprintObj] = useState(null);
 
@@ -100,6 +101,7 @@ useEffect(() => {
               if (!selectedPrinter) {
                 const defaultPrinter = allPrinters.find(p => p.isDefault);
                 setSelectedPrinter(defaultPrinter?.name || allPrinters[0].name);
+                setSelectedClientId(defaultPrinter?.clientId ||allPrinters[0].clientId);
               }
             }
           });
@@ -185,6 +187,7 @@ useEffect(() => {
                     const printDataList = Array(copies).fill({});
                     
                     template.print2(printDataList, {
+                      clientId: selectedClientId, 
                       printer: selectedPrinter,
                       silent: true,
                       copies: copies,
@@ -287,14 +290,14 @@ useEffect(() => {
                 
                 <Link
                   href={`/desgin?id=${template.id}`}
-                  className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+                  className="hidden md:block px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
                 >
                   ✏️ 编辑
                 </Link>
                 
                 <button
                   onClick={() => deleteTemplate(template.id, template.name)}
-                  className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                  className="hidden md:block px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
                 >
                   🗑️ 删除
                 </button>
