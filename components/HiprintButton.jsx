@@ -23,8 +23,8 @@ export default function HiprintButton({
   const [isClientReady, setIsClientReady] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  // 默认开启 TSPL 模式（适用于佳博等热敏机）
-  const [useTSPL, setUseTSPL] = useState(true);   // ✅ 修复：与注释一致
+  // 默认不开启 PDF打印 模式
+  const [usePDF, setUsePDF] = useState(false);  
 
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [printerConfigs, setPrinterConfigs] = useState({});
@@ -383,6 +383,7 @@ export default function HiprintButton({
           $htmlElements.each((index, element) => {
             htmlContent += element.outerHTML;
           });
+          // console.log('🔍 自动生成的HTML:', htmlContent); 
           resolve(htmlContent);
         }, 50);
       });
@@ -485,170 +486,9 @@ export default function HiprintButton({
     }
   };
 
-  // ===== 5. 生成 TSPL 指令 =====
-  const generateTSPL = (dataList, template) => {
-    const { width: paperWidth, height: paperHeight } = getPaperSize(template);
-    const dotPerMm = 11.8;
-    const labelWidth = Math.round(paperWidth * dotPerMm);
-    const labelHeight = Math.round(paperHeight * dotPerMm);
-    const hasMultiplePanels = template?.panels && template.panels.length > 1;
 
-    let tspl = '';
-    tspl += `SIZE ${labelWidth} ${labelHeight}\r\n`;
-    tspl += 'GAP 2 0\r\n';
-    tspl += 'DIRECTION 1\r\n';
-    tspl += 'REFERENCE 0 0\r\n';
-    tspl += 'SET PEEL OFF\r\n';
-    tspl += 'SET TEAR ON\r\n';
 
-    const elements = template?.panels?.[0]?.printElements || [];
-
-    // ✅ 多面板只需打印一次，避免重复出纸
-    const printItems = hasMultiplePanels ? [dataList[0] || {}] : dataList;
-
-    // 统一的转义
-    const escapeText = (s) =>
-      String(s)
-        .replace(/\\/g, '\\\\')
-        .replace(/"/g, '\\"')
-        .replace(/[\r\n]+/g, ' ');
-
-    if (elements.length === 0) {
-      // ===== 兜底：无 elements 分支 =====
-      printItems.forEach((data, index) => {
-        tspl += 'CLS\r\n';   // ✅ 每张前清屏
-        const barcode = data.barcode || `202608190${String(index + 1).padStart(2, '0')}`;
-        const model = data.model || 'DL3500';
-        const capacity = data.capacity || '14.8V - 3.5Ah-51.8Wh';
-        const colorText = data.color || '黑色';
-        const powerText = data.power || '常规版';
-
-        tspl += `TEXT 20,10,"0",1,1,1,"${escapeText(model + '-' + capacity)}"\r\n`;
-        tspl += `TEXT 20,45,"0",1,1,1,"${escapeText('颜色：' + colorText)}"\r\n`;
-        tspl += `TEXT 250,45,"0",1,1,1,"${escapeText(powerText)}"\r\n`;
-        tspl += `BARCODE 100,75,"128",50,1,0,1,2,"${escapeText(barcode)}"\r\n`;
-        tspl += `TEXT 20,140,"0",1,1,1,"${escapeText('CN ' + barcode)}"\r\n`;
-        tspl += 'PRINT 1,1\r\n';   // ✅ 修复：补上出纸指令
-      });
-    } else {
-      printItems.forEach((data, index) => {
-        tspl += 'CLS\r\n';
-
-        const itemData = data;   // ✅ 已由 printItems 决定是否只取第一条
-        elements.forEach((el) => {
-          const type = el.printElementType?.type;
-          const opts = el.options || {};
-
-          let left = opts.left || 0;
-          let top = opts.top || 0;
-          let width = opts.width || 0;
-          let height = opts.height || 0;
-
-          const x = Math.round(left * dotPerMm);
-          const y = Math.round(top * dotPerMm);
-          const w = Math.round(width * dotPerMm);
-          const h = Math.round(height * dotPerMm);
-
-          if (type === 'text') {
-            let title = opts.title || '';
-            title = title.replace(/\{\{([^}]+)\}\}/g, (match, field) => {
-              if (field === 'index') return String(index + 1);
-              const value = itemData[field];
-              return value !== undefined && value !== null ? String(value) : match;
-            });
-
-            const fontSize = opts.fontSize || 10;
-            let xMulti = 1;
-            let yMulti = 1;
-            if (fontSize >= 15) {
-              xMulti = 2;
-              yMulti = 2;
-            }
-
-            if (opts.fontWeight === 'bold' || opts.fontWeight === 'bolder' || opts.fontWeight === '700') {
-              xMulti = Math.min(xMulti + 1, 2);
-            }
-
-            const textAlign = opts.textAlign || 'left';
-            let alignX = x;
-            if (textAlign === 'center') {
-              alignX = x + Math.round(w / 2);
-            } else if (textAlign === 'right') {
-              alignX = x + w;
-            }
-
-            tspl += `TEXT ${alignX},${y},"TSS24.BF2",0,${xMulti},${yMulti},"${escapeText(title)}"\r\n`;
-          } else if (type === 'barcode') {
-            let barcodeData = opts.testData || '';
-            barcodeData = barcodeData.replace(/\{\{([^}]+)\}\}/g, (match, field) => {
-              if (field === 'index') return String(index + 1);
-              const value = itemData[field];
-              return value !== undefined && value !== null ? String(value) : match;
-            });
-
-            const barcodeType = opts.barcodeType || 'code128';
-            let tsplType = '128';
-            if (barcodeType === 'code39') tsplType = '39';
-            else if (barcodeType === 'code93') tsplType = '93';
-            else if (barcodeType === 'code128') tsplType = '128';
-            else if (barcodeType === 'ean13') tsplType = 'EAN13';
-            else if (barcodeType === 'ean8') tsplType = 'EAN8';
-            else if (barcodeType === 'upca') tsplType = 'UPCA';
-            else if (barcodeType === 'upce') tsplType = 'UPCE';
-
-            const barHeight = Math.max(Math.round((opts.height || 20) * dotPerMm / 4), 30);
-            // ✅ 窄条/宽条宽度做范围收敛，避免超出打印机能力
-            const narrowWidth = Math.min(Math.max(
-              opts.barWidth ? Math.round(parseFloat(opts.barWidth) * 2) : 1, 1
-            ), 10);
-            const wideWidth = Math.min(Math.max(narrowWidth * 3, 2), 30);
-
-            tspl += `BARCODE ${x},${y},"${tsplType}",${barHeight},1,0,${narrowWidth},${wideWidth},"${escapeText(barcodeData)}"\r\n`;
-          } else if (type === 'hline') {
-            const lineWidth = opts.borderWidth ? Math.round(parseFloat(opts.borderWidth) * dotPerMm / 2) : 1;
-            tspl += `LINE ${x},${y},${x + w},${y},${Math.max(lineWidth, 1)}\r\n`;
-          } else if (type === 'rect') {
-            const lineWidth = opts.borderWidth ? Math.round(parseFloat(opts.borderWidth) * dotPerMm / 2) : 1;
-            tspl += `BOX ${x},${y},${x + w},${y + h},${Math.max(lineWidth, 1)}\r\n`;
-          }
-        });
-
-        tspl += 'PRINT 1,1\r\n';
-      });
-    }
-
-    return tspl;
-  };
-
-  // ===== 6. 通过中转服务发送 TSPL =====
-  const sendTSPL = async (printer, tsplData) => {
-    try {
-      const response = await fetch(`${TRANSIT_HOST}/print`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          printer: printer,
-          content: tsplData,
-          contentType: 'text/plain',
-          copies: 1,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`中转服务返回错误: ${response.status} - ${errorText}`);
-      }
-
-      const result = await response.json();
-      console.log('✅ TSPL 发送成功:', result);
-      return true;
-    } catch (error) {
-      console.error('❌ 发送 TSPL 失败:', error);
-      throw error;
-    }
-  };
-
-  // ===== 7. 静默打印 =====
+  // ===== 5. 静默打印 =====
   const handleSilentPrint = async () => {
     if (!hiprintObj || !templateData || !printData) {
       return alert('打印组件未就绪或缺失模板/数据！');
@@ -674,41 +514,25 @@ export default function HiprintButton({
     } catch (e) {
       return alert(e.message);
     }
-
     // 🔀 根据用户开关判断使用哪种模式
-    if (!useTSPL) {
+    if (!usePDF) {
       try {
         console.log('🖨️ 尝试 print2 打印...');
 
-        const { width: paperWidth, height: paperHeight } = getPaperSize(template);
-
         const customTemplate = new hiprintObj.PrintTemplate({ template });
-
         const hasMultiplePanels = template?.panels && template.panels.length > 1;
         const finalDataList = hasMultiplePanels ? [{}] : dataList;
-
         const selectedPrinterObj = printerList.find(p => p.name === (selectedPrinter || printerName));
         const clientId = selectedPrinterObj?.clientId || selectedPrinterObj?.server?.clientId || printerList[0]?.clientId;
 
         console.log('clientId:', clientId);
-
-        const widthMicron = Math.round(paperWidth * 1000);
-        const heightMicron = Math.round(paperHeight * 1000);
 
         customTemplate.print2(finalDataList, {
           ...(clientId && { client: clientId }),
           printer: printer,
           silent: true,
           copies: finalDataList.length,
-          pageSize: {
-            width: widthMicron,
-            height: heightMicron,
-          },
-          ...(widthMicron > heightMicron && { landscape: true }),
         });
-
-        // ⚠️ print2 是异步下发，无法在此刻确认客户端出纸结果
-        // 这里延迟 800ms 记录一条"已下发"日志，避免误记为成功
         setTimeout(() => {
           sendPrintLog({ dataList, mode: '打印(已下发)' });
         }, 800);
@@ -723,20 +547,40 @@ export default function HiprintButton({
         });
       }
     } else {
-      // ===== TSPL 打印 =====
+      // ===== PDF 打印 =====
       try {
-        const tsplData = generateTSPL(dataList, template);
-        await sendTSPL(printer, tsplData);
-        sendPrintLog({ dataList, mode: '打印（TSPL）' });
-      } catch (tsplError) {
-        console.error('❌ TSPL 打印失败:', tsplError);
+        console.log('🖨️ 尝试 PDF 打印...');
+
+        const { width: paperWidth, height: paperHeight } = getPaperSize(template);
+        const paperName = 'laber_' + paperWidth + 'x' + paperHeight;
+        console.log('📦 paperName:', paperName);
+        const customTemplate = new hiprintObj.PrintTemplate({ template });
+
+        const hasMultiplePanels = template?.panels && template.panels.length > 1;
+        const finalDataList = hasMultiplePanels ? [{}] : dataList;
+        const selectedPrinterObj = printerList.find(p => p.name === (selectedPrinter || printerName));
+        const clientId = selectedPrinterObj?.clientId || selectedPrinterObj?.server?.clientId || printerList[0]?.clientId;
+
+        customTemplate.print2(finalDataList, {
+          ...(clientId && { client: clientId }),
+          printer: printer,
+          silent: true,
+          copies: finalDataList.length,
+          type: 'pdf',                      // 👈 加上这一行，客户端才会走 PDF 打印路径
+          paperName:paperName,
+          ...(paperWidth > paperHeight && { orientation: 'landscape' }),// 👈 判断要不要旋转内容
+        });
+        setTimeout(() => {
+          sendPrintLog({ dataList, mode: '打印(已下发)' });
+        }, 800);
+      }catch (error) {
+        alert('print2 打印失败：' + error.message);
         sendPrintLog({
           dataList,
           status: 'FAILED',
-          mode: 'TSPL 模式',
-          errorMessage: tsplError.message,
+          mode: 'print2 模式',
+          errorMessage: error.message,
         });
-        alert('TSPL 打印失败：' + tsplError.message);
       }
     }
   };
@@ -813,19 +657,18 @@ export default function HiprintButton({
           >
             ⚙️
           </button>
-
-          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-3 flex-wrap">
             <label
               className="flex items-center gap-1.5 text-xs cursor-pointer select-none text-gray-700 bg-gray-50 hover:bg-gray-100 px-2.5 py-1.5 rounded-md border border-gray-300 transition-colors"
-              title="打勾使用佳博/热敏机TSPL指令（精准走纸），不打勾使用默认HTML渲染"
+              title="打勾使用PDF（精准走纸），不打勾使用默认HTML渲染"
             >
               <input
                 type="checkbox"
-                checked={useTSPL}
-                onChange={(e) => setUseTSPL(e.target.checked)}
+                checked={usePDF}
+                onChange={(e) => setUsePDF(e.target.checked)}
                 className="w-3.5 h-3.5 rounded text-blue-600 focus:ring-0 cursor-pointer"
               />
-              <span className="font-medium">TSPL 模式</span>
+              <span className="font-medium">PDF 模式</span>
             </label>
           </div>
         </div>
@@ -862,6 +705,12 @@ export default function HiprintButton({
             </p>
             <div className="flex gap-3">
               <button
+                onClick={() => setShowConfirm(false)}
+                className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
+              >
+                取消
+              </button>
+              <button
                 onClick={() => {
                   setShowConfirm(false);
                   handleSilentPrint();
@@ -869,12 +718,6 @@ export default function HiprintButton({
                 className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
               >
                 ✅ 确认打印
-              </button>
-              <button
-                onClick={() => setShowConfirm(false)}
-                className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
-              >
-                取消
               </button>
             </div>
             <button
