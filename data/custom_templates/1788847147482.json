@@ -1,6 +1,6 @@
 {
   "id": "1788847147482",
-  "name": "4123",
+  "name": "测试文字",
   "data": {
     "panels": [
       {
@@ -21,7 +21,7 @@
               "coordinateSync": false,
               "widthHeightSync": false,
               "fontFamily": "Microsoft YaHei",
-              "fontSize": 15.75,
+              "fontSize": 21.75,
               "fontWeight": "bolder",
               "textContentVerticalAlign": "middle",
               "qrCodeLevel": 0,
@@ -60,5 +60,5 @@
     ]
   },
   "createdAt": "2026-09-08T05:59:07.482Z",
-  "updatedAt": "2026-09-08T06:45:51.814Z"
+  "updatedAt": "2026-09-18T07:28:13.840Z"
 }

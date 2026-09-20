@@ -23,8 +23,8 @@ export default function HiprintButton({
   const [isClientReady, setIsClientReady] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  // 默认不开启 PDF打印 模式
-  const [usePDF, setUsePDF] = useState(false);  
+  // 默认开启 PDF打印 模式
+  const [usePDF, setUsePDF] = useState(true);  
 
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [printerConfigs, setPrinterConfigs] = useState({});
@@ -383,7 +383,7 @@ export default function HiprintButton({
           $htmlElements.each((index, element) => {
             htmlContent += element.outerHTML;
           });
-          // console.log('🔍 自动生成的HTML:', htmlContent); 
+          console.log('🔍 自动生成的HTML:', htmlContent); 
           resolve(htmlContent);
         }, 50);
       });
@@ -518,6 +518,10 @@ export default function HiprintButton({
     if (!usePDF) {
       try {
         console.log('🖨️ 尝试 print2 打印...');
+        const { width: paperWidth, height: paperHeight } = getPaperSize(template);
+        const widthMicron = Math.round(paperWidth * 1000);
+        const heightMicron = Math.round(paperHeight * 1000);
+
 
         const customTemplate = new hiprintObj.PrintTemplate({ template });
         const hasMultiplePanels = template?.panels && template.panels.length > 1;
@@ -532,6 +536,14 @@ export default function HiprintButton({
           printer: printer,
           silent: true,
           copies: finalDataList.length,
+          pageSize: {
+            width: widthMicron,
+            height: heightMicron,
+          },
+          // 驱动里已建好的自定义纸张名(如 laber_60x30)。客户端会以打印票据的 MediaSizeName
+          // 指定纸张；不传时自定义尺寸会变成驱动的 CUSTOM 表单，部分驱动会忽略并回落到默认纸张。
+          paperName: 'laber_' + paperWidth + 'x' + paperHeight,
+          // ...(widthMicron > heightMicron && { landscape: true }),
         });
         setTimeout(() => {
           sendPrintLog({ dataList, mode: '打印(已下发)' });
@@ -553,7 +565,9 @@ export default function HiprintButton({
 
         const { width: paperWidth, height: paperHeight } = getPaperSize(template);
         const paperName = 'laber_' + paperWidth + 'x' + paperHeight;
-        console.log('📦 paperName:', paperName);
+        const widthMicron = Math.round(paperWidth * 1000);
+        const heightMicron = Math.round(paperHeight * 1000);
+
         const customTemplate = new hiprintObj.PrintTemplate({ template });
 
         const hasMultiplePanels = template?.panels && template.panels.length > 1;
@@ -568,6 +582,13 @@ export default function HiprintButton({
           copies: finalDataList.length,
           type: 'pdf',                      // 👈 加上这一行，客户端才会走 PDF 打印路径
           paperName:paperName,
+          // PDF 页面尺寸必须等于标签纸尺寸（单位：微米，客户端会换算成 printToPDF 需要的英寸）；
+          // 不传时 Electron 会按默认 Letter 出 PDF，再以自定义纸张打印就会被驱动整体缩小。
+          pageSize: {
+            width: widthMicron,
+            height: heightMicron,
+          },
+          topOffset: 2,                 // 👈 单位 mm，偏多少填多少
           ...(paperWidth > paperHeight && { orientation: 'landscape' }),// 👈 判断要不要旋转内容
         });
         setTimeout(() => {

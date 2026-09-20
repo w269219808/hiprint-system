@@ -53,7 +53,7 @@ const HiprintDesigner = forwardRef(function HiprintDesigner({ templateData, onSa
       const formattedJson = JSON.stringify(json, null, 2);
       setJsonText(formattedJson); // 回显到文本框
 
-      if (onSave) onSave(json);
+      // if (onSave) onSave(json);
     }
   };
 
@@ -407,6 +407,7 @@ const HiprintDesigner = forwardRef(function HiprintDesigner({ templateData, onSa
             🖨️ 打印
           </button>
           <button
+            type="button"
             onClick={handleExportJson}
             disabled={!isReady}
             className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors"
