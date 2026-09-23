@@ -24,7 +24,8 @@ ssh 你的NAS用户名@你的NASIP
 
 ### 2️⃣ 进入项目目录
 ```bash
-cd /volume1/文件临时中转站/hiprint/hiprint
+cd /volume2/产品资料/应用软件/标签打印软件/hiprint
+
 # 绿联的具体路径可能不同，根据你的实际情况调整
 
 # 2. 强制重新构建（用 sudo）
