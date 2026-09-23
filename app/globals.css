@@ -94,3 +94,31 @@ body {
   line-height: 1;
   color: #2563eb;
 }
+
+/* ===== 终极防御：强制修复 iOS 真机文字过浅的问题 ===== */
+
+/* 1. 强制所有按钮、输入框、下拉框的文字为深灰色（除非它们原本就是蓝底白字） */
+button:not([class*="bg-blue"]), 
+input, 
+select, 
+textarea {
+  color: #1f2937 !important; /* 强行变成深灰色 */
+}
+
+/* 2. 强制输入框的占位符（Placeholder）使用深灰色，并覆盖 iOS 的透明属性 */
+input::placeholder,
+textarea::placeholder {
+  color: #4b5563 !important; /* text-gray-600 */
+  opacity: 1 !important;
+  -webkit-text-fill-color: #4b5563 !important; /* 关键：iOS 专属强制填充色 */
+}
+
+/* 3. 强制加深边框，防止 iOS 把边框渲染没 */
+input, select, textarea, button {
+  border-color: #9ca3af !important; /* border-gray-400 */
+}
+
+/* 4. 防止 iOS 自动放大字体（小于16px的字体 iOS 会强制放大导致模糊） */
+input, select, textarea, button {
+  font-size: 16px !important;
+}
