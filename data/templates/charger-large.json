@@ -42,7 +42,7 @@
                         "left": 30,
                         "top": 37.5,
                         "height": 14,
-                        "width": 120,
+                        "width": 170,
                         "title": "产品编码:{{barcode}}",
                         "right": 160.5,
                         "bottom": 46.25,
@@ -65,7 +65,7 @@
                         "left": 30,
                         "top": 51,
                         "height": 14,
-                        "width": 120,
+                        "width": 170,
                         "title": "输入电压: {{inputVoltage}}",
                         "right": 135,
                         "bottom": 44.75,
@@ -88,7 +88,7 @@
                         "left": 30,
                         "top": 64.5,
                         "height": 14,
-                        "width": 120,
+                        "width": 170,
                         "title": "输出电压: {{outputVoltage}}",
                         "right": 135,
                         "bottom": 58.5,
@@ -110,12 +110,14 @@
                     {
                         "left": 30,
                         "top": 82,
-                        "height": 19.5,
-                        "width": 160,
-                        "title": "this is this is this is this is this is this is this is this is ",
+                        "height": 27,
+                        "width": 171,
+                        "title": "Designed for fishing reel batteries only. For other applications, verify power supply compatibility.",
                         "coordinateSync": false,
                         "widthHeightSync": false,
-                        "qrCodeLevel": 0
+                        "qrCodeLevel": 0,
+                        "fontSize": 7.5,
+                        "lineHeight": 6.75
                     },
                     "printElementType":
                     {

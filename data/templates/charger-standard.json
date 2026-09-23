@@ -109,14 +109,15 @@
                     "options":
                     {
                         "left": 15,
-                        "top": 56,
+                        "top": 59,
                         "height": 19.5,
-                        "width": 142,
-                        "title": "this is this is this is this is this is this is this is this is ",
+                        "width": 135,
+                        "title": "Designed for fishing reel batteries only. For other applications, verify power supply compatibility.",
                         "coordinateSync": false,
                         "widthHeightSync": false,
                         "qrCodeLevel": 0,
-                        "fontSize": 7
+                        "fontSize": 6,
+                        "lineHeight": 6
                     },
                     "printElementType":
                     {

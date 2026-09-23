@@ -112,13 +112,3 @@ textarea::placeholder {
   opacity: 1 !important;
   -webkit-text-fill-color: #4b5563 !important; /* 关键：iOS 专属强制填充色 */
 }
-
-/* 3. 强制加深边框，防止 iOS 把边框渲染没 */
-input, select, textarea, button {
-  border-color: #9ca3af !important; /* border-gray-400 */
-}
-
-/* 4. 防止 iOS 自动放大字体（小于16px的字体 iOS 会强制放大导致模糊） */
-input, select, textarea, button {
-  font-size: 16px !important;
-}
