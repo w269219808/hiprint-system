@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import Link from 'next/link';
 import HiprintButton from '@/components/HiprintButton';
-import { ProductPanel, ChargerPanel, CustomerPanel } from '@/components/labels';
+import { ProductPanel, ChargerPanel, CustomerPanel,CompanyPanel } from '@/components/labels';
 
 const LABEL_TYPES = [
   { key: 'product', label: '📦 产品标签' },
@@ -109,9 +109,7 @@ export default function HomePage() {
 
         {/* 公司标签 */}
         {isCompany && (
-          <div className="text-center py-8 text-gray-500">
-            🏢 公司标签开发中...
-          </div>
+          <CompanyPanel onDataChange={handleDataChange} />
         )}
 
         {/* 打印控制 */}

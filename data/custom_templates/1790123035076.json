@@ -1,0 +1,129 @@
+{
+  "id": "1790123035076",
+  "name": "dnyo80x40",
+  "data": {
+    "panels": [
+      {
+        "index": 0,
+        "name": 1,
+        "height": 40,
+        "width": 80,
+        "paperHeader": 0,
+        "paperFooter": 105.05050505050504,
+        "printElements": [
+          {
+            "options": {
+              "left": 76.5,
+              "top": 8,
+              "height": 26,
+              "width": 79.5,
+              "src": "/dnyo-logo.jpg",
+              "fit": "",
+              "coordinateSync": false,
+              "widthHeightSync": false,
+              "right": 155.25,
+              "bottom": 27.75,
+              "vCenter": 115.5,
+              "hCenter": 15
+            },
+            "printElementType": {
+              "title": "图片",
+              "type": "image"
+            }
+          },
+          {
+            "options": {
+              "left": 0,
+              "top": 36,
+              "height": 23,
+              "width": 226.5,
+              "title": "上海电耀电子科技有限公司",
+              "coordinateSync": false,
+              "widthHeightSync": false,
+              "fontFamily": "Microsoft YaHei",
+              "fontSize": 13.5,
+              "textContentVerticalAlign": "middle",
+              "qrCodeLevel": 0,
+              "right": 225.75,
+              "bottom": 58.25,
+              "vCenter": 112.5,
+              "hCenter": 46.75,
+              "textAlign": "center"
+            },
+            "printElementType": {
+              "title": "这是更新后的元素",
+              "type": "text"
+            }
+          },
+          {
+            "options": {
+              "left": 0,
+              "top": 58.5,
+              "height": 22,
+              "width": 226.5,
+              "title": "地址：上海宝山区沪太路7098号1幢1层-96室",
+              "coordinateSync": false,
+              "widthHeightSync": false,
+              "qrCodeLevel": 0,
+              "right": 177,
+              "bottom": 79.75,
+              "vCenter": 88.5,
+              "hCenter": 68.75,
+              "fontSize": 9.75,
+              "textAlign": "center",
+              "textContentVerticalAlign": "middle"
+            },
+            "printElementType": {
+              "title": "文本",
+              "type": "text"
+            }
+          },
+          {
+            "options": {
+              "left": -1.5,
+              "top": 81,
+              "height": 16,
+              "width": 226.5,
+              "title": "客服电话:400-888-7387",
+              "coordinateSync": false,
+              "widthHeightSync": false,
+              "fontSize": 11.25,
+              "textAlign": "center",
+              "textContentVerticalAlign": "middle",
+              "qrCodeLevel": 0,
+              "right": 226.5,
+              "bottom": 96.25,
+              "vCenter": 113.25,
+              "hCenter": 88.25
+            },
+            "printElementType": {
+              "title": "文本",
+              "type": "text"
+            }
+          }
+        ],
+        "paperNumberLeft": 138,
+        "paperNumberTop": 67.5,
+        "paperNumberDisabled": true,
+        "paperNumberContinue": true,
+        "watermarkOptions": {
+          "content": "",
+          "rotate": 25,
+          "timestamp": false,
+          "format": "YYYY-MM-DD HH:mm",
+          "fillStyle": "rgba(184, 184, 184, 0.3)",
+          "fontSize": "14px",
+          "width": 200,
+          "height": 200
+        },
+        "panelLayoutOptions": {
+          "layoutType": "column",
+          "layoutRowGap": 0,
+          "layoutColumnGap": 0
+        }
+      }
+    ]
+  },
+  "createdAt": "2026-09-23T00:23:55.076Z",
+  "updatedAt": "2026-09-23T01:43:42.946Z"
+}

@@ -1,0 +1,150 @@
+{
+  "id": "1790126488373",
+  "name": "蓝铭80*40",
+  "data": {
+    "panels": [
+      {
+        "index": 0,
+        "name": 1,
+        "height": 40,
+        "width": 80,
+        "paperHeader": 0,
+        "paperFooter": 105.05050505050504,
+        "printElements": [
+          {
+            "options": {
+              "left": 71.5,
+              "top": 17,
+              "height": 15,
+              "width": 84,
+              "src": "/sea_fisherman_logo.jpg",
+              "fit": "",
+              "coordinateSync": false,
+              "widthHeightSync": false,
+              "right": 159.75,
+              "bottom": 27.75,
+              "vCenter": 117.75,
+              "hCenter": 20.25
+            },
+            "printElementType": {
+              "title": "图片",
+              "type": "image"
+            }
+          },
+          {
+            "options": {
+              "left": 0,
+              "top": 37,
+              "height": 17,
+              "width": 226.5,
+              "title": "湖州蓝铭电子科技有限公司",
+              "coordinateSync": false,
+              "widthHeightSync": false,
+              "fontFamily": "Microsoft YaHei",
+              "fontSize": 13.5,
+              "textContentVerticalAlign": "middle",
+              "qrCodeLevel": 0,
+              "right": 225.75,
+              "bottom": 45.75,
+              "vCenter": 112.5,
+              "hCenter": 38.25,
+              "textAlign": "center"
+            },
+            "printElementType": {
+              "title": "这是更新后的元素",
+              "type": "text"
+            }
+          },
+          {
+            "options": {
+              "left": 16,
+              "top": 57,
+              "height": 11,
+              "width": 27,
+              "title": "地址:",
+              "right": 28,
+              "bottom": 59.75,
+              "vCenter": 17,
+              "hCenter": 54.25,
+              "coordinateSync": false,
+              "widthHeightSync": false,
+              "qrCodeLevel": 0,
+              "fontSize": 10.5,
+              "lineHeight": 10.5
+            },
+            "printElementType": {
+              "title": "文本",
+              "type": "text"
+            }
+          },
+          {
+            "options": {
+              "left": 42,
+              "top": 58,
+              "height": 20,
+              "width": 174,
+              "title": "浙江省湖州市南浔区双林镇花城村罗田坝88号吉成产业园11幢2单元402",
+              "coordinateSync": false,
+              "widthHeightSync": false,
+              "qrCodeLevel": 0,
+              "right": 202.5,
+              "bottom": 68,
+              "vCenter": 122.25,
+              "hCenter": 58,
+              "fontSize": 10.5,
+              "lineHeight": 10.5
+            },
+            "printElementType": {
+              "title": "文本",
+              "type": "text"
+            }
+          },
+          {
+            "options": {
+              "left": 0,
+              "top": 84,
+              "height": 16,
+              "width": 225,
+              "title": "客服电话:400-888-7387",
+              "coordinateSync": false,
+              "widthHeightSync": false,
+              "fontSize": 10.5,
+              "textAlign": "center",
+              "textContentVerticalAlign": "middle",
+              "qrCodeLevel": 0,
+              "right": 225,
+              "bottom": 91,
+              "vCenter": 112.5,
+              "hCenter": 83
+            },
+            "printElementType": {
+              "title": "文本",
+              "type": "text"
+            }
+          }
+        ],
+        "paperNumberLeft": 138,
+        "paperNumberTop": 67.5,
+        "paperNumberDisabled": true,
+        "paperNumberContinue": true,
+        "watermarkOptions": {
+          "content": "",
+          "rotate": 25,
+          "timestamp": false,
+          "format": "YYYY-MM-DD HH:mm",
+          "fillStyle": "rgba(184, 184, 184, 0.3)",
+          "fontSize": "14px",
+          "width": 200,
+          "height": 200
+        },
+        "panelLayoutOptions": {
+          "layoutType": "column",
+          "layoutRowGap": 0,
+          "layoutColumnGap": 0
+        }
+      }
+    ]
+  },
+  "createdAt": "2026-09-23T01:21:28.373Z",
+  "updatedAt": "2026-09-23T01:25:17.583Z"
+}

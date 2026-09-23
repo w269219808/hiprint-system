@@ -5,15 +5,15 @@
   "DL10000": { "voltage": "14.8V", "capacity": "10Ah-148Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"], "power":"常规版" },
   "DN35T": { "voltage": "14.8V", "capacity": "3.5Ah-51.8Wh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"], "power":"电量显示版" },
   "DN50T": { "voltage": "14.8V", "capacity": "5.0Ah-74Wh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"], "power":"电量显示版" },
-  "DN70T": { "voltage": "14.8V", "capacity": "7.0Ah103.6Wh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"], "power":"电量显示版" },
+  "DN70T": { "voltage": "14.8V", "capacity": "7.0Ah-103.6Wh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"], "power":"电量显示版" },
   "DN10T": { "voltage": "14.8V", "capacity": "10Ah-148Wh", "colors": ["银色", "黑色", "红色", "土豪金", "蓝色", "香槟金"], "power":"电量显示版" },
   "DX35": { "voltage": "14.8V", "capacity": "3.5Ah-51.8Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"], "power":"电量显示版" },
   "DX50": { "voltage": "14.8V", "capacity": "5.0Ah-74Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"], "power":"电量显示版" },
-  "DX70": { "voltage": "14.8V", "capacity": "7.0Ah103.6Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"], "power":"电量显示版" },
+  "DX70": { "voltage": "14.8V", "capacity": "7.0Ah-103.6Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"], "power":"电量显示版" },
   "DX10": { "voltage": "14.8V", "capacity": "10Ah-148Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"], "power":"电量显示版" },
   "DM35": { "voltage": "14.8V", "capacity": "3.5Ah-51.8Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"], "power":"电量显示版" },
   "DM50": { "voltage": "14.8V", "capacity": "5.0Ah-74Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"], "power":"电量显示版" },
-  "DM70": { "voltage": "14.8V", "capacity": "7.0Ah103.6Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"], "power":"电量显示版" },
+  "DM70": { "voltage": "14.8V", "capacity": "7.0Ah-103.6Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"], "power":"电量显示版" },
   "DM10": { "voltage": "14.8V", "capacity": "10Ah-148Wh", "colors": ["黑色", "银色", "上黑下银", "上银下黑"], "power":"电量显示版" },
   "GN20F": { "voltage": "14.8V", "capacity": "20Ah-296Wh", "colors": ["银色", "黑色", "香槟金"], "power":"电量显示版" },
   "GN25F": { "voltage": "11.1V", "capacity": "25Ah-277.5Wh", "colors": ["银色", "黑色", "香槟金"], "power":"电量显示版"},
@@ -24,22 +24,22 @@
     "voltage": "14.8V",
     "isMultiCapacity": true,
     "capacities": [
-      { "label": "10.0Ah-14.8Wh", "colors": ["黑色", "蓝色"], "power":"电量显示版" },
+      { "label": "10Ah-14.8Wh", "colors": ["黑色", "蓝色"], "power":"电量显示版" },
       { "label": "13.5Ah-199.8Wh", "colors": ["黑色", "蓝色"], "power":"电量显示版" },
-      { "label": "15.0Ah-222Wh", "colors": ["黑色", "蓝色"], "power":"电量显示版" }
+      { "label": "15Ah-222Wh", "colors": ["黑色", "蓝色"], "power":"电量显示版" }
     ]
   },
   "DN1700NS": {
     "voltage": "14.8V",
     "isMultiCapacity": true,
     "capacities": [
-      { "label": "7.8Ah", "colors": ["黑色", "蓝色", "白色"], "power":"电量显示版" },
-      { "label": "9.6Ah", "colors": ["黑色", "蓝色", "白色"], "power":"电量显示版" },
-      { "label": "10.4Ah", "colors": ["黑色", "蓝色", "白色"], "power":"电量显示版" },
-      { "label": "11.6Ah", "colors": ["黑色", "蓝色", "白色"], "power":"电量显示版" },
-      { "label": "12.8Ah", "colors": ["黑色", "蓝色", "白色"], "power":"电量显示版" },
-      { "label": "13.6Ah", "colors": ["黑色", "蓝色", "白色"], "power":"电量显示版" },
-      { "label": "14Ah", "colors": ["黑色", "蓝色", "白色"], "power":"电量显示版" }
+      { "label": "7.8Ah-115.44Wh", "colors": ["黑色", "蓝色", "白色"], "power":"电量显示版" },
+      { "label": "9.6Ah-142.08Wh", "colors": ["黑色", "蓝色", "白色"], "power":"电量显示版" },
+      { "label": "10.4Ah-153.92Wh", "colors": ["黑色", "蓝色", "白色"], "power":"电量显示版" },
+      { "label": "11.6Ah-171.68Wh", "colors": ["黑色", "蓝色", "白色"], "power":"电量显示版" },
+      { "label": "12.8Ah-189.44Wh", "colors": ["黑色", "蓝色", "白色"], "power":"电量显示版" },
+      { "label": "13.6Ah-201.28Wh", "colors": ["黑色", "蓝色", "白色"], "power":"电量显示版" },
+      { "label": "14Ah-207.2Wh", "colors": ["黑色", "蓝色", "白色"], "power":"电量显示版" }
     ]
   }
 
