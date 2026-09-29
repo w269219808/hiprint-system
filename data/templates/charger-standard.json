@@ -117,7 +117,7 @@
                         "widthHeightSync": false,
                         "qrCodeLevel": 0,
                         "fontSize": 6,
-                        "lineHeight": 6
+                        "lineHeight": 6.75
                     },
                     "printElementType":
                     {
