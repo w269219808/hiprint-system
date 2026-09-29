@@ -5,6 +5,25 @@ import chargersData from '@/data/chargers.json';
 import chargerTemplatesConfig from '@/data/templates/charger-templates.json';
 import chargerStandard from '@/data/templates/charger-standard.json';
 import chargerLarge from '@/data/templates/charger-large.json';
+import chargerI18n from '@/data/templates/charger-i18n.json';
+
+
+// 语言显示名 → i18n key 的映射
+const LANG_KEY_MAP = {
+  '英文': 'en',
+  'English': 'en',
+  '中文': 'zh',
+  '日本語': 'ja',
+  'Deutsch': 'de',
+};
+
+// 取当前语言翻译，找不到就回退英文
+const getI18n = (lang) => {
+  const key = LANG_KEY_MAP[lang] ?? lang;
+  return chargerI18n[key] ?? chargerI18n.en ?? {};
+};
+
+
 
 // 模板映射
 const TEMPLATE_MAP = {
@@ -31,13 +50,13 @@ const getFirstLang = (model) => {
 };
 
 // 自动获取当天的日期字符串
-const getTodayDateString = () => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
+// const getTodayDateString = () => {
+//   const today = new Date();
+//   const year = today.getFullYear();
+//   const month = String(today.getMonth() + 1).padStart(2, '0');
+//   const day = String(today.getDate()).padStart(2, '0');
+//   return `${year}-${month}-${day}`;
+// };
 
 export default function ChargerPanel({ onDataChange }) {
   const firstModel = getFirstModel();
@@ -45,7 +64,7 @@ export default function ChargerPanel({ onDataChange }) {
   // ===== 状态 =====
   const [model, setModel] = useState(firstModel);
   const [lang, setLang] = useState(getFirstLang(firstModel));
-  const [barcodeText, setBarcodeText] = useState(getTodayDateString());
+  const [barcodeText, setBarcodeText] = useState(chargersData[firstModel]?.barcode || '');
   const [copies, setCopies] = useState(1);
   const [selectedTemplateId, setSelectedTemplateId] = useState(getDefaultTemplate().id);
 
@@ -61,11 +80,14 @@ export default function ChargerPanel({ onDataChange }) {
 
   const langOptions = currentCharger?.lang || [];
 
-  // ===== 当型号切换时，更新语言 =====
+  // ===== 当型号切换时，更新语言和条码 =====
   useEffect(() => {
     if (currentCharger?.lang?.length > 0) {
       setLang(currentCharger.lang[0]);
     }
+    if (currentCharger?.barcode) {
+    setBarcodeText(currentCharger.barcode);   // ← 新增
+  }
   }, [model]);
 
   // ===== 占位符替换 =====
@@ -95,6 +117,7 @@ export default function ChargerPanel({ onDataChange }) {
 
   // ===== 构建打印数据 =====
   const getPrintData = () => {
+    const i18n = getI18n(lang); 
     const result = [];
     for (let i = 0; i < copies; i++) {
       result.push({
@@ -105,7 +128,14 @@ export default function ChargerPanel({ onDataChange }) {
         outputVoltage: currentCharger?.outputVoltage || '',
         outputCurrent: currentCharger?.outputCurrent || '',
         power: currentCharger?.power || '',
-        barcode: barcodeText || 'CH-001',
+        barcode: barcodeText || currentCharger?.barcode || '',
+        // 注入翻译字段
+        productTitle: i18n.productTitle || '',
+        disclaimer: i18n.disclaimer || '',
+              // 新增的三个标签
+        labelBarcode: i18n.labelBarcode || '',
+        labelInputVoltage: i18n.labelInputVoltage || '',
+        labelOutputVoltage: i18n.labelOutputVoltage || '',
       });
     }
     return result;

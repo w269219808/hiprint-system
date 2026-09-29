@@ -1,35 +1,35 @@
 {
   "CH-1.5A": {
+    "barcode": "02060102",
     "model": "CH-1.5A",
     "inputVoltage": "AC100V-245V",
     "inputCurrent": "1.5A",
     "outputVoltage": "DC16.8V-1.5A",
-    "lang": ["英文","中文"],
-    "isMultiColor": true
+    "lang": ["英文","中文"]
   },
   "CH-2A": {
+    "barcode": "02060103",
     "model": "CH-2A",
     "inputVoltage": "AC100V-245V",
     "inputCurrent": "2A",
     "outputVoltage": "DC16.8V-2A",
-    "lang": ["英文","中文"],
-    "isMultiColor": true
+    "lang": ["英文","中文"]
   },
   "CH-3A": {
+    "barcode": "02060104",
     "model": "CH-3A",
     "inputVoltage": "AC100V-245V",
     "inputCurrent": "3A",
     "outputVoltage": "DC16.8V-3A",
-    "lang": ["英文","中文"],
-    "isMultiColor": true
+    "lang": ["英文","中文"]
   },
   "CH-5A": {
+    "barcode": "02060109",
     "model": "CH-5A",
     "inputVoltage": "AC100V-245V",
     "inputCurrent": "5A",
     "outputVoltage": "DC16.8V-5A",
-    "lang": ["英文","中文"],
-    "isMultiColor": true
+    "lang": ["英文","中文"]
   }
 
 }

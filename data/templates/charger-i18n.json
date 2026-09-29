@@ -1,0 +1,16 @@
+{
+  "en": {
+    "productTitle": "Fishing Reel Battery Charger",
+    "disclaimer": "Designed for fishing reel batteries only. For other applications, verify power supply compatibility.",
+    "labelBarcode": "Product Code",
+    "labelInputVoltage": "Input Voltage",
+    "labelOutputVoltage": "Output Voltage"
+  },
+  "zh": {
+    "productTitle": "渔轮电池充电器",
+    "disclaimer": "仅适用于渔轮电池。用于其他场景时，请确认电源兼容性。",
+    "labelBarcode": "产品编码",
+    "labelInputVoltage": "输入电压",
+    "labelOutputVoltage": "输出电压"
+  }
+}
