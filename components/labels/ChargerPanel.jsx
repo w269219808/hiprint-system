@@ -25,9 +25,9 @@ const getFirstModel = () => {
 };
 
 // 获取第一个颜色
-const getFirstColor = (model) => {
+const getFirstLang = (model) => {
   const charger = chargersData[model];
-  return charger?.colors?.length > 0 ? charger.colors[0] : '';
+  return charger?.lang?.length > 0 ? charger.lang[0] : '';
 };
 
 // 自动获取当天的日期字符串
@@ -44,7 +44,7 @@ export default function ChargerPanel({ onDataChange }) {
 
   // ===== 状态 =====
   const [model, setModel] = useState(firstModel);
-  const [color, setColor] = useState(getFirstColor(firstModel));
+  const [lang, setLang] = useState(getFirstLang(firstModel));
   const [barcodeText, setBarcodeText] = useState(getTodayDateString());
   const [copies, setCopies] = useState(1);
   const [selectedTemplateId, setSelectedTemplateId] = useState(getDefaultTemplate().id);
@@ -59,12 +59,12 @@ export default function ChargerPanel({ onDataChange }) {
 
   const currentTemplate = TEMPLATE_MAP[currentTemplateConfig.templateFile] || chargerStandard;
 
-  const colorOptions = currentCharger?.colors || [];
+  const langOptions = currentCharger?.lang || [];
 
-  // ===== 当型号切换时，更新颜色 =====
+  // ===== 当型号切换时，更新语言 =====
   useEffect(() => {
-    if (currentCharger?.colors?.length > 0) {
-      setColor(currentCharger.colors[0]);
+    if (currentCharger?.lang?.length > 0) {
+      setLang(currentCharger.lang[0]);
     }
   }, [model]);
 
@@ -99,7 +99,7 @@ export default function ChargerPanel({ onDataChange }) {
     for (let i = 0; i < copies; i++) {
       result.push({
         model: model,
-        color: color,
+        lang: lang,
         inputVoltage: currentCharger?.inputVoltage || '',
         inputCurrent: currentCharger?.inputCurrent || '',
         outputVoltage: currentCharger?.outputVoltage || '',
@@ -155,7 +155,7 @@ export default function ChargerPanel({ onDataChange }) {
       },
       templateName: currentTemplateConfig.name,
     });
-  }, [model, color, barcodeText, copies, selectedTemplateId]);
+  }, [model, lang, barcodeText, copies, selectedTemplateId]);
 
   // ===== 渲染 =====
   return (
@@ -212,16 +212,16 @@ export default function ChargerPanel({ onDataChange }) {
         <div>
           <label className="block text-sm font-medium text-gray-600">颜色</label>
           <select
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
+            value={lang}
+            onChange={(e) => setLang(e.target.value)}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md bg-white"
           >
-            {colorOptions.length > 0 ? (
-              colorOptions.map((c) => (
-                <option key={c} value={c}>{c}</option>
+            {langOptions.length > 0 ? (
+              langOptions.map((l) => (
+                <option key={l} value={l}>{l}</option>
               ))
             ) : (
-              <option value="">暂无颜色</option>
+              <option value="">暂无</option>
             )}
           </select>
         </div>
@@ -243,7 +243,7 @@ export default function ChargerPanel({ onDataChange }) {
       <div className="mt-3 text-xs text-gray-500 bg-white p-2 rounded border border-gray-200">
         <span>⚡输入: {currentCharger?.inputVoltage || '—'}</span>
         <span className="px-4">输出: {currentCharger?.outputVoltage || '—'}</span>
-        <span>颜色: {color || '未选择'}</span>
+        <span>语言: {lang || '未选择'}</span>
       </div>
 
       {/* 份数控制 */}
