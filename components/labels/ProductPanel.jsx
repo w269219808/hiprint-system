@@ -183,8 +183,8 @@ const ProductPanel = forwardRef(function ProductPanel({ onDataChange }, ref) {
     // ✅ 根据语言直接转换成最终显示的文字
     const isEnglish = lang === '英文';
     let displayPower = rawPower;
-    if (rawPower === '常规版') {
-      displayPower = isEnglish ? 'Standard' : '常规版';
+    if (rawPower === '无电量显示') {
+      displayPower = isEnglish ? 'No battery display' : '无电量显示';
     } else {
       displayPower = isEnglish ? 'Power Display' : '电量显示版';
     }
