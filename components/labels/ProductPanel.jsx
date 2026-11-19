@@ -8,7 +8,7 @@ import largeTemplate from '@/data/templates/product-large.json';
 import smallTemplate from '@/data/templates/product-small.json';
 import wideTemplate from '@/data/templates/product-wide.json';
 import { colorTranslation } from '@/data/colors';
-import { getNextBarcode, getPreviewBarcodes, allocateBarcodes, getPrintedCount, getTodayPrefix } from '@/lib/barcodeCounter';
+import { allocateBarcodes, getPrintedCount, getTodayPrefix } from '@/lib/barcodeCounter';
 
 // 模板映射
 const TEMPLATE_MAP = {
@@ -230,32 +230,56 @@ const ProductPanel = forwardRef(function ProductPanel({ onDataChange }, ref) {
     return { panels };
   };
 
-  // ===== 打印时分配条形码序号（异步调用服务端） =====
+  // ===== 打印时分配条形码序号（异步调用后端接口） =====
   useImperativeHandle(ref, () => ({
     allocateBarcodes: async (count) => {
-      // 未传数量时以面板当前"打印份数"为准
       const n = Math.max(
         1,
         Number.isFinite(Number(count)) ? Math.floor(Number(count)) : Math.max(1, copies)
       );
-      const result = await allocateBarcodes(n);
-      const { codes, next } = result;
-      setBarcodeText(next);
-      // 同步更新本地缓存，让下次预览也用最新值
-      setServerCount(parseInt(next.slice(8), 10) || 0);
-      const printDataList = getPrintData(codes);
-      const template = buildTemplate(printDataList);
-      return { printData: printDataList, template };
+
+      try {
+        // 产品标签继续使用“日期 + 3位流水号”，并通过 labelType 与追溯码隔离计数。
+        const result = await allocateBarcodes(n, 'product');
+        const { codes, next } = result;
+
+        if (!Array.isArray(codes) || codes.length !== n) {
+          throw new Error('产品标签序号申请失败');
+        }
+
+        const lastSequence = Number.parseInt(codes[codes.length - 1].slice(-3), 10) || 0;
+        const nextBarcode =
+          next || `${getTodayPrefix()}${String(lastSequence + 1).padStart(3, '0')}`;
+        const nextNum = Number.parseInt(nextBarcode.slice(-3), 10) || 1;
+
+        setBarcodeText(nextBarcode);
+        setServerCount(nextNum);
+
+        const printDataList = getPrintData(codes);
+        const template = buildTemplate(printDataList);
+        return { printData: printDataList, template };
+
+      } catch (err) {
+        console.error('❌ 产品标签申请条码异常:', err);
+        throw err;
+      }
     },
   }));
 
-  // ===== 初始化：从服务端加载当前序号 =====
+// ===== 初始化：从服务端加载当前序号 =====
   useEffect(() => {
     const init = async () => {
       const prefix = getTodayPrefix();
-      const count = await getPrintedCount(prefix);
-      setServerCount(count);
-      setBarcodeText(`${prefix}${count}`);
+      const count = await getPrintedCount(prefix,'product');
+
+      // 🟢 如果后端查出来的 count 是 7，说明今天已用到 007，下一个是 8
+      const nextServerCount = Number(count) >= 0 ? Number(count) + 1 : 1;
+      setServerCount(nextServerCount);
+
+      // 动态拼出带 3 位补零的标准条码（如 20261110008）
+      const initialCode = `${prefix}${String(nextServerCount).padStart(3, '0')}`;
+      setBarcodeText(initialCode);
+
       applyModelDefaults(model);
     };
     init();
@@ -429,6 +453,7 @@ const ProductPanel = forwardRef(function ProductPanel({ onDataChange }, ref) {
           </label>
           <input
             type="text"
+            // 🟢 直接读取 barcodeText 状态
             value={barcodeText}
             readOnly
             placeholder="自动生成（如：202608140）"

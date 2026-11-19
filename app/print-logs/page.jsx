@@ -46,30 +46,56 @@ function SummaryCell({ row }) {
     );
   }
 
-  const fields = [
-    summary.copies != null && `数量:${summary.copies}`,
-    summary.model && `型号:${summary.model}`,
-    summary.capacity && `容量:${summary.capacity}`,
-    summary.color && `颜色:${summary.color}`,
-    summary.lang && `语言:${summary.lang}`,
-    summary.customerCode && `客户:${summary.customerCode}`,
-    summary.productCode && `料号:${summary.productCode}`,
-    Array.isArray(summary.barcodes) && summary.barcodes.length > 0
-      ? `条码:${summary.barcodes.join(',')}`
-      : '',
-    summary.printerName && `打印机:${summary.printerName}`,
-    summary.error && `错误:${summary.error}`,
-  ].filter(Boolean);
+  // 🔑 优化条码展示逻辑：如果条码太多，只显示首尾，避免 UI 被撑爆
+  let barcodeDisplay = '-';
+  if (Array.isArray(summary.barcodes) && summary.barcodes.length > 0) {
+    if (summary.barcodes.length <= 4) {
+      // 4个及以内，全部显示
+      barcodeDisplay = summary.barcodes.join(', ');
+    } else {
+      // 超过4个，只显示：第一条 ... 最后一条 （并在后面标注总数）
+      const first = summary.barcodes[0];
+      const last = summary.barcodes[summary.barcodes.length - 1];
+      const totalNum = summary.totalCount || summary.rawBarcodeCount || summary.barcodes.length;
+      barcodeDisplay = `${first} ... ${last} （共 ${totalNum} 个码）`;
+    }
+  }
 
   return (
-    <div className="text-xs text-gray-700 leading-relaxed">
-      <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-        {fields.map((field) => (
-          <span key={field} className="whitespace-nowrap">{field}</span>
-        ))}
+    <div className="text-xs text-gray-700 leading-relaxed space-y-0.5">
+      {/* 第一行：操作人、数量、打印机 */}
+      <div className="flex flex-wrap gap-x-3 text-gray-800 font-medium">
+        {summary.username && <span>操作人: {summary.username}</span>}
+        {summary.totalCount != null && <span>数量: {summary.totalCount}</span>}
+        {summary.printerName && <span className="text-gray-500">打印机: {summary.printerName}</span>}
       </div>
-      {Array.isArray(summary.barcodes) && summary.barcodes.length > 6 && (
-        <span className="text-gray-400">（共 {summary.barcodes.length} 个条码，仅显示首尾）</span>
+
+      {/* 第二行：型号、容量、颜色等（如果有） */}
+      {(summary.model || summary.capacity || summary.color || summary.lang || summary.customerCode) && (
+        <div className="text-gray-600">
+          {[
+            summary.model && `型号: ${summary.model}`,
+            summary.capacity && `容量: ${summary.capacity}`,
+            summary.color && `颜色: ${summary.color}`,
+            summary.lang && `语言: ${summary.lang}`,
+            summary.customerCode && `客户: ${summary.customerCode}`,
+          ].filter(Boolean).join(' | ')}
+        </div>
+      )}
+
+      {/* 第三行：精简后的条码展示（鼠标悬停可看完整列表） */}
+      {summary.barcodes && summary.barcodes.length > 0 && (
+        <div 
+          className="text-blue-600 font-mono truncate max-w-xl" 
+          title={Array.isArray(summary.barcodes) ? summary.barcodes.join(', ') : ''}
+        >
+          条码: {barcodeDisplay}
+        </div>
+      )}
+
+      {/* 错误信息（如果打印失败） */}
+      {summary.error && (
+        <div className="text-red-500 text-xs">错误: {summary.error}</div>
       )}
     </div>
   );
@@ -215,7 +241,7 @@ export default function PrintLogsPage() {
             />
             <button
               onClick={handleSearch}
-              className="px-3 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800 transition-colors"
+              className="px-3 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 transition-colors"
             >
               搜索
             </button>

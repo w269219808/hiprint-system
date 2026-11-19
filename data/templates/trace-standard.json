@@ -1,0 +1,165 @@
+{
+  "panels": [
+    {
+      "index": 0,
+      "name": 1,
+      "height": 10,
+      "width": 94,
+      "paperHeader": 3,
+      "paperFooter": 27.500000000000004,
+      "printElements": [
+       {
+          "options": {
+            "left": 9,
+            "top": 1.5,
+            "height": 20,
+            "width": 70,
+            "title": "条形码",
+            "barcodeType": "code128",
+            "testData": "{{code1}}",
+            "barWidth": "4",
+            "right": 74.25,
+            "bottom": 18,
+            "vCenter": 40.5,
+            "hCenter": 8.25,
+            "coordinateSync": false,
+            "widthHeightSync": false,
+            "hideTitle": true
+          },
+          "printElementType": {
+            "title": "条形码1",
+            "type": "barcode"
+          }
+        },
+        {
+          "options": {
+            "left": 100,
+            "top": 1.5,
+            "height": 20,
+            "width": 70,
+            "title": "条形码",
+            "barcodeType": "code128",
+            "testData": "{{code2}}",
+            "barWidth": "4",
+            "right": 169.74359130859375,
+            "bottom": 18,
+            "vCenter": 134.74359130859375,
+            "hCenter": 9,
+            "coordinateSync": false,
+            "widthHeightSync": false,
+            "hideTitle": true
+          },
+          "printElementType": {
+            "title": "条形码2",
+            "type": "barcode"
+          }
+        },
+        {
+          "options": {
+            "left": 191,
+            "top": 1.5,
+            "height": 20,
+            "width": 70,
+            "title": "条形码",
+            "barcodeType": "code128",
+            "testData": "{{code3}}",
+            "barWidth": "4",
+            "right": 257.49359130859375,
+            "bottom": 19.491474151611328,
+            "vCenter": 222.49359130859375,
+            "hCenter": 10.491474151611328,
+            "coordinateSync": false,
+            "widthHeightSync": false,
+            "hideTitle": true
+          },
+          "printElementType": {
+            "title": "条形码3",
+            "type": "barcode"
+          }
+        },
+        {
+          "options": {
+            "left": 9,
+            "top": 22,
+            "height": 5,
+            "width": 70,
+            "title": " {{showCode1}}",
+            "coordinateSync": false,
+            "widthHeightSync": false,
+            "fontSize": 4.5,
+            "textAlign": "center",
+            "qrCodeLevel": 0,
+            "right": 15.75,
+            "bottom": 42.5,
+            "vCenter": 8.25,
+            "hCenter": 38.5,
+            "textContentVerticalAlign": "middle",
+            "lineHeight": 5
+          },
+          "printElementType": {
+            "title": "条形码显示1",
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 100,
+            "top": 22,
+            "height": 5,
+            "width": 70,
+            "title": " {{showCode2}}",
+            "coordinateSync": false,
+            "widthHeightSync": false,
+            "fontSize": 4.5,
+            "textAlign": "center",
+            "qrCodeLevel": 0,
+            "right": 168.75,
+            "bottom": 27.75,
+            "vCenter": 134.25,
+            "hCenter": 24.75,
+            "textContentVerticalAlign": "middle",
+            "lineHeight": 5
+          },
+          "printElementType": {
+            "title": "条形码显示1",
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 191,
+            "top": 22,
+            "height": 5,
+            "width": 70,
+            "title": " {{showCode3}}",
+            "coordinateSync": false,
+            "widthHeightSync": false,
+            "fontSize": 4.5,
+            "textAlign": "center",
+            "qrCodeLevel": 0,
+            "right": 258.75,
+            "bottom": 26.25,
+            "vCenter": 224.25,
+            "hCenter": 23.25,
+            "textContentVerticalAlign": "middle",
+            "lineHeight": 5
+          },
+          "printElementType": {
+            "title": "条形码显示1",
+            "type": "text"
+          }
+        }
+      ],
+      "paperNumberLeft": 140,
+      "paperNumberTop": 6,
+      "paperNumberDisabled": true,
+      "paperNumberContinue": true,
+      "watermarkOptions": {},
+      "panelLayoutOptions": {
+        "layoutType": "column",
+        "layoutRowGap": 0,
+        "layoutColumnGap": 0
+      }
+    }
+  ]
+}

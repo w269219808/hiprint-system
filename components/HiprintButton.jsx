@@ -7,6 +7,21 @@ import PrinterConfigModal from './PrinterConfigModal';
 const TRANSIT_HOST = process.env.NEXT_PUBLIC_TRANSIT_HOST || 'http://192.168.110.107:17521';
 
 
+// 🔑 异步获取当前登录的真实用户名
+const fetchCurrentUsername = async () => {
+  try {
+    const res = await fetch('/api/auth/me'); // ⚠️ 换成你这个 route_2.js 对应的实际请求路径（比如 /api/user 或 /api/session 等）
+    const result = await res.json();
+    if (result.success && result.data?.username) {
+      return result.data.username;
+    }
+  } catch (e) {
+    // 忽略错误，走保底
+  }
+  return 'admin';
+};
+
+
 export default function HiprintButton({
   templateData,
   printData,
@@ -15,6 +30,8 @@ export default function HiprintButton({
   printerName = '',
   onBeforePrint,
   labelType = '标签',
+  defaultPDFMode = true, // 👈 新增：默认 PDF 模式，默认 true（兼容其他标签页）
+  disabled = false,
 }) {
   const [hiprintObj, setHiprintObj] = useState(null);
   const [isReady, setIsReady] = useState(false);
@@ -24,7 +41,11 @@ export default function HiprintButton({
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   // 默认开启 PDF打印 模式
-  const [usePDF, setUsePDF] = useState(true);  
+  const [usePDF, setUsePDF] = useState(defaultPDFMode); 
+  // 👇 加上这个监听：只要父组件传来的 defaultPDFMode 变了，就同步更新
+  useEffect(() => {
+    setUsePDF(defaultPDFMode);
+  }, [defaultPDFMode]);
 
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [printerConfigs, setPrinterConfigs] = useState({});
@@ -125,34 +146,57 @@ export default function HiprintButton({
     };
   };
 
-  // ===== 构建日志摘要 =====
+  // ===== 构建日志摘要（最终完美版） =====
   const buildLogSummary = (dataList) => {
     const list = Array.isArray(dataList) ? dataList : dataList ? [dataList] : [];
     const first = list[0] || {};
+    
+    // 1. 提取所有具体的条码
     const barcodes = [
       ...new Set(
         list
-          .map((d) => d.barcode || d.labelText || d.sequence)
+          .flatMap((d) => [d.barcode, d.labelText, d.sequence, d.code1, d.code2, d.code3])
           .filter(Boolean)
       ),
     ];
+
+    // 2. 智能计算总数量：优先取自定义的 totalCount 或 rawBarcodeCount，其次用条码数组长度，最后保底为行数
+    const calculatedTotalCount = list.totalCount || first.totalCount || barcodes.length || list.length;
+
+    // 3. 获取用户名（优先从数组属性取，其次取 localStorage，最后保底 admin）
+    const currentUsername = 
+      list.username || 
+      first.username || 
+      (typeof window !== 'undefined' ? localStorage.getItem('username') || 'admin' : 'admin');
+
     return {
-      copies: list.length,
-      model: first.model,
-      color: first.color,
-      capacity: first.capacity,
-      lang: first.lang,
-      customerCode: first.customerCode,
-      productCode: first.productCode,
+      username: currentUsername,
+      totalCount: calculatedTotalCount, // 👈 这样这里就会显示你选的 3 了！
+      copiesPerCode: list.copiesPerCode || first.copiesPerCode || 1,
+      copies: calculatedTotalCount,    // 联动总数，让大盘统计也能正确识别 3
+      model: list.model || first.model,
+      capacity: list.capacity || first.capacity,
+      color: list.color || first.color,
+      customer: list.customer || first.customer,
       barcodes: barcodes.length > 6 ? [barcodes[0], barcodes[barcodes.length - 1]] : barcodes,
+      rawBarcodeCount: barcodes.length,
     };
   };
-
-  // ===== 上报打印日志 =====
+  // ===== 上报打印日志（最终完美版） =====
   const sendPrintLog = async ({ dataList, status = 'SUCCESS', mode = '打印', errorMessage }) => {
+    if (mode === '预览' || status === 'PREVIEW') {
+      console.log('当前为预览模式，不写入数据库日志');
+      return;
+    }
+
     try {
+      // 🔑 动态请求后端接口，拿到当前真正的登录用户名！
+      const currentUsername = await fetchCurrentUsername();
+
       const summary = buildLogSummary(dataList);
       if (errorMessage) summary.error = errorMessage;
+      summary.username = currentUsername; // 注入真实用户名
+
       await fetch('/api/print-log', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -160,7 +204,7 @@ export default function HiprintButton({
           printType: `${labelType} ${mode}`,
           contentSummary: summary,
           printerName: selectedPrinter || printerName || '',
-          copies: summary.copies,
+          copies: summary.copies || summary.totalCount || 1,
           status,
         }),
       });
@@ -168,7 +212,6 @@ export default function HiprintButton({
       console.error('写入打印日志失败:', error);
     }
   };
-
   // ===== 1. 初始化 Hiprint =====
   useEffect(() => {
     let isMounted = true;
@@ -390,7 +433,7 @@ export default function HiprintButton({
     });
   };
 
-  // ===== 抽取公共：调用 onBeforePrint（带异常保护） =====
+
   const prepareDataAndTemplate = async (isSilentFlag) => {
     let dataList = Array.isArray(printData) ? printData : [printData];
     let template = templateData;
@@ -401,9 +444,19 @@ export default function HiprintButton({
         if (bundle) {
           dataList = Array.isArray(bundle.printData) ? bundle.printData : [bundle.printData];
           template = bundle.template || templateData;
+        } else {
+          // 🔑 关键：如果子面板返回空（比如被拦截或校验失败），主动记为失败日志！
+          throw new Error('子面板未返回有效的打印数据');
         }
       } catch (e) {
         console.error('❌ onBeforePrint 执行失败:', e);
+        // 记录失败日志
+        sendPrintLog({
+          dataList,
+          status: 'FAILED',
+          mode: '打印',
+          errorMessage: e.message || '子面板未返回有效的打印数据',
+        });
         throw new Error('打印前数据处理失败：' + e.message);
       }
     }
@@ -662,14 +715,22 @@ export default function HiprintButton({
           </span>
           <button
             onClick={handlePrint}
-            disabled={!isReady || !isClientReady}
+            disabled={!isReady || !isClientReady || disabled}
             className={`px-4 py-2 rounded text-white text-sm font-medium transition-colors ${
-              isReady && isClientReady
+              isReady && isClientReady && !disabled
                 ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
                 : 'bg-gray-400 cursor-not-allowed'
             }`}
           >
-            {!isReady ? '⏳ 加载中...' : isLoading ? '⏳ 获取中...' : !isClientReady ? '⚠️ 未连接' : buttonText}
+            {disabled
+              ? '暂无可打印数据'
+              : !isReady
+                ? '⏳ 加载中...'
+                : isLoading
+                  ? '⏳ 获取中...'
+                  : !isClientReady
+                    ? '⚠️ 未连接'
+                    : buttonText}
           </button>
           <button
             onClick={() => setShowConfigModal(true)}
@@ -696,14 +757,14 @@ export default function HiprintButton({
       ) : (
         <button
           onClick={handlePrint}
-          disabled={!isReady}
+          disabled={!isReady || disabled}
           className={`px-4 py-2 rounded text-white text-sm font-medium transition-colors ${
-            isReady
+            isReady && !disabled
               ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
               : 'bg-gray-400 cursor-not-allowed'
           }`}
         >
-          {!isReady ? '⏳ 加载中...' : buttonText}
+          {disabled ? '暂无可打印数据' : !isReady ? '⏳ 加载中...' : buttonText}
         </button>
       )}
       <PrinterConfigModal

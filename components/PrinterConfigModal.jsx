@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-const ALL_PAPER_SIZES = ['60x30', '80x40', '60x40', '100x80', '40x30'];
+const ALL_PAPER_SIZES = ['60x30', '80x40', '60x40', '100x80', '94x10'];
 
 export default function PrinterConfigModal({
   isOpen,
